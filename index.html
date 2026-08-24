@@ -36,7 +36,7 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div class="group"><div class="label-row"><i data-lucide="calendar"></i><label>Fecha</label></div><div class="wrap"><input type="date" id="fecha"></div></div>
 <div class="group"><div class="label-row"><i data-lucide="store"></i><label>Cliente</label></div><div class="wrap"><input type="text" id="cliente" placeholder="Ej. El caldito" oninput="auto()" autocomplete="off"><div id="list"></div></div></div>
 <div class="group"><div class="label-row"><i data-lucide="package"></i><label>Tipo</label></div><div class="wrap"><select id="tipo"><option value="Moto Mandado">Moto Mandado</option><option value="Moto Transporte">Moto Transporte</option></select></div></div>
-<div class="group"><div class="label-row"><i data-lucide="dollar-sign"></i><label>Valor del servicio</label></div><div style="display:flex;gap:6px"><div class="wrap" style="flex:1"><input type="number" id="valor" placeholder="0"><input type="text" id="valorPromo" value="PROMOCION" style="display:none;background:#f3e8ff;border-color:#a855f7;color:#6b21a8;font-weight:800;text-align:center" disabled></div><button id="btnPromo" class="btn-promo" onclick="togglePromo()" title="Promocion"><i data-lucide="gift" style="width:18px"></i></button></div></div>
+<div class="group"><div class="label-row"><i data-lucide="dollar-sign"></i><label>Valor del servicio</label></div><div style="display:flex;gap:6px"><div class="wrap" style="flex:1"><input type="number" id="valor" placeholder="0"><input type="text" id="valorPromo" value="PROMOCION" style="display:none;background:#f3e8ff;border-color:#a855f7;color:#6b21a8;font-weight:800;text-align:center" disabled></div><button id="btnPromo" class="btn-promo" onclick="togglePromo()"><i data-lucide="gift" style="width:18px"></i></button></div></div>
 <div class="group"><div class="label-row"><i data-lucide="user"></i><label>Repartidor</label></div><div class="wrap"><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
 <button class="btn" onclick="guardar()"><i data-lucide="check" style="width:16px"></i><span id="btnT">Confirmar</span></button>
 <button id="btnC" onclick="cancelar()" style="display:none;width:100%;height:36px;background:none;border:none;font-size:11px;font-weight:600;color:#6b7280;cursor:pointer;margin-top:6px">Cancelar</button>
@@ -63,7 +63,29 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <button id="b-cobros" onclick="showView('cobros')"><i data-lucide="wallet" style="width:18px"></i>COBROS</button>
 </div>
 <script>
+let promosNuevas=[
+{iso:'2026-08-10',cliente:'Calle 7',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-08-10').getTime()+1},
+{iso:'2026-08-10',cliente:'Calle 7',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-08-10').getTime()+2},
+{iso:'2026-07-14',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-14').getTime()+1},
+{iso:'2026-07-14',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-14').getTime()+2},
+{iso:'2026-07-14',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-14').getTime()+3},
+{iso:'2026-07-14',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-14').getTime()+4},
+{iso:'2026-07-14',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-14').getTime()+5},
+{iso:'2026-07-14',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-14').getTime()+6},
+{iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+1},
+{iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+2},
+{iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+3},
+{iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+4},
+{iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+5},
+{iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+6},
+{iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+7}
+];
 let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,filtroHoy='todos',filtroHistTipo='todos',editIndex=-1,fechasCobro=[],esPromo=false;
+if(!localStorage.getItem('promosFinal15')){
+  ventas=[...promosNuevas,...ventas];
+  localStorage.setItem('ventasKigo',JSON.stringify(ventas));
+  localStorage.setItem('promosFinal15','1');
+}
 function fmt(n){return (n||0).toLocaleString('es-CO');}
 function todayISO(){return new Date().toISOString().split('T')[0];}
 function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));document.getElementById('b-'+v).classList.add('active');if(v==='hoy')renderHoy();if(v==='historial')render();if(v==='cobros')renderCobros();}
@@ -79,7 +101,7 @@ function eliminar(i,from){if(!confirm('Eliminar?'))return;let base=from==='hoy'?
 function togglePagado(i,from){let base=from==='hoy'?ventas.filter(v=>v.iso===todayISO()):(filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas);if(from==='hoy'&&filtroHoy!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);if(from!=='hoy'&&filtroHistTipo!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);let ri=ventas.indexOf(base[i]);if(ventas[ri].promo)return;ventas[ri].pagado=!ventas[ri].pagado;localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();renderHoy();renderCobros();}
 function filtrarFecha(){filtroFecha=document.getElementById('filtroFecha').value||null;render();}
 function limpiarFiltro(){document.getElementById('filtroFecha').value='';filtroFecha=null;render();}
-function badge(t,promo){if(promo)return `<span class="badge badge-promo">PROMO</span>`;let tt=t||'Moto Mandado';let c=tt==='Moto Transporte'?'badge-transporte':'badge-mandado';return `<span class="badge ${c}">${tt==='Moto Transporte'?'TRANS':'MAND'}</span>`;}
+function badge(t,p){if(p)return `<span class="badge badge-promo">PROMO</span>`;let tt=t||'Moto Mandado';let c=tt==='Moto Transporte'?'badge-transporte':'badge-mandado';return `<span class="badge ${c}">${tt==='Moto Transporte'?'TRANS':'MAND'}</span>`;}
 function addFechaCobro(){let f=document.getElementById('cobroFecha').value;if(!f)return;if(!fechasCobro.includes(f))fechasCobro.push(f);document.getElementById('cobroFecha').value='';renderCobros();}
 function limpiarFechasCobro(){fechasCobro=[];renderCobros();}
 function addHoyAyer(){let h=new Date();let a=new Date();a.setDate(h.getDate()-1);let ih=h.toISOString().split('T')[0];let ia=a.toISOString().split('T')[0];if(!fechasCobro.includes(ih))fechasCobro.push(ih);if(!fechasCobro.includes(ia))fechasCobro.push(ia);renderCobros();}
