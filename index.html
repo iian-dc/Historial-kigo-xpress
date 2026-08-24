@@ -7,16 +7,17 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest"></script>
 <style>
-:root{--black:#0a0a0a;--gray:#f2f3f5;--border:#e5e7eb;--text:#6b7280;--red:#dc2626;--white:#fff}
+:root{--black:#0a0a0a;--gray:#f2f3f5;--border:#e5e7eb;--text:#6b7280;--red:#dc2626;--green:#16a34a;--white:#fff}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
 body{background:var(--gray);min-height:100vh;padding-bottom:80px}
 .top{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:10;font-size:14px}
 .view{display:none;padding:12px;max-width:650px;margin:0 auto}.view.active{display:block}
 .card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px}
 .group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
-.group label{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text)}
-.wrap{position:relative}.wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#9ca3af}
-.wrap input,.wrap select{width:100%;height:48px;padding:0 12px 0 38px;border:1.5px solid var(--border);border-radius:12px;font-size:13px;font-weight:500;outline:none}
+.label-row{display:flex;align-items:center;gap:6px}
+.label-row i{width:14px;height:14px;color:#6b7280}
+.label-row label{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text)}
+.wrap{position:relative}.wrap input,.wrap select{width:100%;height:48px;padding:0 12px;border:1.5px solid var(--border);border-radius:12px;font-size:13px;font-weight:500;outline:none}
 .btn{width:100%;height:50px;background:var(--black);color:#fff;border:none;border-radius:12px;font-weight:700;display:flex;gap:6px;align-items:center;justify-content:center;cursor:pointer;font-size:13px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
 .stat{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:10px}
@@ -28,16 +29,20 @@ body{background:var(--gray);min-height:100vh;padding-bottom:80px}
 .date-bar input{flex:1;height:36px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-weight:600;font-size:12px}
 .table-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden}
 table{width:100%;border-collapse:collapse}
-th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padding:8px 10px;background:#fafafa;border-bottom:1px solid var(--border);letter-spacing:.5px}
-td{padding:8px 10px;font-size:11px;border-bottom:1px solid #f3f4f6;line-height:1.2}
+th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padding:8px 10px;background:#fafafa;border-bottom:1px solid var(--border)}
+td{padding:8px 10px;font-size:11px;border-bottom:1px solid #f3f4f6;line-height:1.2;transition:.2s}
 td b{font-size:11px}
-td.sub{font-size:9px;color:#6b7280}
+.sub{font-size:9px;color:#6b7280}
+.row-pagado td{background:#dcfce7!important;color:#166534}.row-pagado.sub{color:#15803d}
+.row-debe td{background:#fee2e2!important;color:#991b1b}.row-debe.sub{color:#b91c1c}
 .actions{display:flex;gap:4px;justify-content:flex-end}
 .icon{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;cursor:pointer}
+.icon.pagado{background:var(--green);border-color:var(--green);color:#fff}
+.icon.debe{background:var(--red);border-color:var(--red);color:#fff}
 .bottom{position:fixed;bottom:0;left:0;right:0;height:68px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:20}
 .bottom button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:700;color:var(--text);cursor:pointer}.bottom button.active{color:var(--black)}
-#list{position:absolute;top:50px;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.08);display:none;z-index:10;max-height:140px;overflow:auto}
-#list div{padding:9px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #f3f4f6}#list div:hover{background:#f9fafb}
+#list{position:absolute;top:52px;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.08);display:none;z-index:10;max-height:140px;overflow:auto}
+#list div{padding:9px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #f3f4f6}
 </style>
 </head>
 <body>
@@ -45,10 +50,22 @@ td.sub{font-size:9px;color:#6b7280}
 
 <div id="view-inicio" class="view active">
   <div class="card">
-    <div class="group"><label>Fecha del servicio</label><div class="wrap"><i data-lucide="calendar"></i><input type="date" id="fecha"></div></div>
-    <div class="group"><label>Cliente / Comercio</label><div class="wrap"><i data-lucide="store"></i><input type="text" id="cliente" placeholder="Ej. El caldito" oninput="auto()" autocomplete="off"><div id="list"></div></div></div>
-    <div class="group"><label>Valor del servicio</label><div class="wrap"><i data-lucide="dollar-sign"></i><input type="number" id="valor" placeholder="0"></div></div>
-    <div class="group"><label>Repartidor</label><div class="wrap"><i data-lucide="user"></i><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
+    <div class="group">
+      <div class="label-row"><i data-lucide="calendar"></i><label>Fecha del servicio</label></div>
+      <div class="wrap"><input type="date" id="fecha"></div>
+    </div>
+    <div class="group">
+      <div class="label-row"><i data-lucide="store"></i><label>Cliente / Comercio</label></div>
+      <div class="wrap"><input type="text" id="cliente" placeholder="Ej. El caldito" oninput="auto()" autocomplete="off"><div id="list"></div></div>
+    </div>
+    <div class="group">
+      <div class="label-row"><i data-lucide="dollar-sign"></i><label>Valor del servicio</label></div>
+      <div class="wrap"><input type="number" id="valor" placeholder="0"></div>
+    </div>
+    <div class="group">
+      <div class="label-row"><i data-lucide="user"></i><label>Repartidor</label></div>
+      <div class="wrap"><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div>
+    </div>
     <button class="btn" onclick="guardar()"><i data-lucide="check" style="width:16px"></i><span id="btnT">Confirmar Venta</span></button>
     <button id="btnC" onclick="cancelar()" style="display:none;width:100%;height:36px;background:none;border:none;font-size:11px;font-weight:600;color:#6b7280;cursor:pointer;margin-top:6px">Cancelar edición</button>
   </div>
@@ -58,11 +75,11 @@ td.sub{font-size:9px;color:#6b7280}
   <div class="date-bar"><i data-lucide="calendar-days" style="width:16px;color:#6b7280"></i><input type="date" id="filtroFecha" onchange="filtrarFecha()"><button onclick="limpiarFiltro()" style="height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer;font-size:11px">Todos</button></div>
   <div class="stats">
     <div class="stat"><span>Pedidos día</span><strong id="sCount">0</strong></div>
-    <div class="stat"><span>Bruto día (total)</span><strong id="sBruto">$0</strong></div>
-    <div class="stat dark"><span>Repartidor día</span><strong id="sRep">$0</strong></div>
+    <div class="stat"><span>Bruto día (total servicios)</span><strong id="sBruto">$0</strong></div>
+    <div class="stat dark"><span>Repartidor día (bruto - $5)</span><strong id="sRep">$0</strong></div>
     <div class="stat red"><span>KIGO día ($5 x servicio)</span><strong id="sKigo">$0</strong></div>
   </div>
-  <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Bruto</th><th>KIGO</th><th>Repar.</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
+  <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Bruto</th><th>KIGO</th><th>Repar.</th><th style="text-align:right">Estado / Acciones</th></tr></thead><tbody id="tbody"></tbody></table></div>
 </div>
 
 <div class="bottom">
@@ -76,13 +93,14 @@ function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.r
 function auto(){let input=document.getElementById('cliente').value.toLowerCase();let list=document.getElementById('list');if(!input){list.style.display='none';return;}let clientes=[...new Set(ventas.map(v=>v.cliente))].filter(c=>c.toLowerCase().includes(input)).slice(0,8);if(!clientes.length){list.style.display='none';return;}list.innerHTML=clientes.map(c=>`<div onclick="sel('${c.replace(/'/g,"\\'")}')">${c}</div>`).join('');list.style.display='block';}
 function sel(c){document.getElementById('cliente').value=c;document.getElementById('list').style.display='none';}
 document.addEventListener('click',e=>{if(!e.target.closest('.wrap'))document.getElementById('list').style.display='none';});
-function guardar(){let fecha=document.getElementById('fecha').value||new Date().toISOString().split('T')[0];let cliente=document.getElementById('cliente').value.trim();let valor=parseInt(document.getElementById('valor').value);let repa=document.getElementById('repa').value;if(!cliente||!valor)return alert('Completa datos');let obj={iso:fecha,cliente,valor,repa};if(editIndex>=0){ventas[editIndex]=obj;editIndex=-1;document.getElementById('btnT').innerText='Confirmar Venta';document.getElementById('btnC').style.display='none';}else{ventas.unshift(obj);}localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';render();showView('historial');}
+function guardar(){let fecha=document.getElementById('fecha').value||new Date().toISOString().split('T')[0];let cliente=document.getElementById('cliente').value.trim();let valor=parseInt(document.getElementById('valor').value);let repa=document.getElementById('repa').value;if(!cliente||!valor)return alert('Completa datos');let obj={iso:fecha,cliente,valor,repa,pagado:false};if(editIndex>=0){let prev=ventas[editIndex];obj.pagado=prev.pagado||false;ventas[editIndex]=obj;editIndex=-1;document.getElementById('btnT').innerText='Confirmar Venta';document.getElementById('btnC').style.display='none';}else{ventas.unshift(obj);}localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';render();showView('historial');}
 function cancelar(){document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';document.getElementById('btnT').innerText='Confirmar Venta';editIndex=-1;document.getElementById('btnC').style.display='none';}
 function editar(i){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);let v=ventas[realIdx];document.getElementById('cliente').value=v.cliente;document.getElementById('valor').value=v.valor;document.getElementById('repa').value=v.repa;document.getElementById('fecha').value=v.iso;editIndex=realIdx;document.getElementById('btnT').innerText='Guardar Cambios';document.getElementById('btnC').style.display='block';showView('inicio');}
 function eliminar(i){if(!confirm('¿Eliminar?'))return;let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);ventas.splice(realIdx,1);localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();}
+function togglePagado(i){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);ventas[realIdx].pagado=!ventas[realIdx].pagado;localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();}
 function filtrarFecha(){filtroFecha=document.getElementById('filtroFecha').value||null;render();}
 function limpiarFiltro(){document.getElementById('filtroFecha').value='';filtroFecha=null;render();}
-function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;document.getElementById('tbody').innerHTML=list.map((v,i)=>`<tr><td style="font-size:10px">${v.iso.slice(5)}</td><td><b>${v.cliente}</b><div style="font-size:9px;color:#6b7280">${v.repa}</div></td><td>$${v.valor}</td><td style="color:#dc2626;font-weight:700">$5</td><td style="font-weight:700">$${v.valor-5}</td><td><div class="actions"><button class="icon" onclick="editar(${i})"><i data-lucide="pencil" style="width:12px"></i></button><button class="icon" onclick="eliminar(${i})"><i data-lucide="trash-2" style="width:12px"></i></button></div></td></tr>`).join('');lucide.createIcons();let dia=filtroFecha||new Date().toISOString().split('T')[0];let dList=ventas.filter(v=>v.iso===dia);let total=dList.reduce((a,b)=>a+b.valor,0);let kigo=dList.length*5;let repar=total-kigo;document.getElementById('sCount').innerText=dList.length;document.getElementById('sBruto').innerText='$'+total;document.getElementById('sRep').innerText='$'+repar;document.getElementById('sKigo').innerText='$'+kigo;}
+function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;document.getElementById('tbody').innerHTML=list.map((v,i)=>{let cls=v.pagado?'row-pagado':'row-debe';return `<tr class="${cls}"><td style="font-size:10px">${v.iso.slice(5)}</td><td><b>${v.cliente}</b><div class="sub">${v.repa}</div></td><td>$${v.valor}</td><td style="font-weight:700">$5</td><td style="font-weight:700">$${v.valor-5}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i})" title="${v.pagado?'Pagado':'Debe'}"><i data-lucide="${v.pagado?'check':'x'}" style="width:12px"></i></button><button class="icon" onclick="editar(${i})"><i data-lucide="pencil" style="width:12px"></i></button><button class="icon" onclick="eliminar(${i})"><i data-lucide="trash-2" style="width:12px"></i></button></div></td></tr>`;}).join('');lucide.createIcons();let dia=filtroFecha||new Date().toISOString().split('T')[0];let dList=ventas.filter(v=>v.iso===dia);let total=dList.reduce((a,b)=>a+b.valor,0);let kigo=dList.length*5;let repar=total-kigo;document.getElementById('sCount').innerText=dList.length;document.getElementById('sBruto').innerText='$'+total;document.getElementById('sRep').innerText='$'+repar;document.getElementById('sKigo').innerText='$'+kigo;}
 render();lucide.createIcons();
 </script>
 </body>
