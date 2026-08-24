@@ -496,3 +496,129 @@ function limpiarFiltro(){document.getElementById('filtroFecha').value='';filtroF
 function render(){let list=filtered();document.getElementById('tbody').innerHTML=list.map((v,i)=>`<tr><td style="font-size:11px">${v.fecha}</td><td><b>${v.cliente}</b><div style="font-size:10px;color:#6b7280">${v.repa}</div></td><td>$${v.valor}</td><td style="color:#dc2626;font-weight:700">$5</td><td style="font-weight:700">$${v.repartidor}</td><td><div class="actions"><button class="icon" onclick="editar(${i})"><i data-lucide="pencil" style="width:14px"></i></button><button class="icon" onclick="eliminar(${i})"><i data-lucide="trash-2" style="width:14px"></i></button></div></td></tr>`).join('');lucide.createIcons();let diaParaStats=filtroFecha||new Date().toISOString().split('T')[0];let diaList=ventas.filter(v=>v.iso===diaParaStats);let mes=diaParaStats.slice(0,7);let mesList=ventas.filter(v=>v.iso.startsWith(mes));document.getElementById('sCount').innerText=diaList.length;document.getElementById('sBruto').innerText='$'+diaList.reduce((a,b)=>a+b.valor,0);document.getElementById('sRep').innerText='$'+diaList.reduce((a,b)=>a+b.repartidor,0);document.getElementById('sKigo').innerText='$'+diaList.reduce((a,b)=>a+b.kygo,0);document.getElementById('sMesCount').innerText=mesList.length;document.getElementById('sRepMes').innerText='$'+mesList.reduce((a,b)=>a+b.repartidor,0);}
 parseData();render();lucide.createIcons();
 </script></body></html>
+8/16/2026	domingo	Jose	Chicken Krunch	$45
+8/16/2026	domingo	Jose	Calle 7	$45
+8/16/2026	domingo	Jose	Eder Gallegos	$45
+8/16/2026	domingo	Jose	El caldito	$45
+8/16/2026	domingo	Jose	El caldito	$45
+8/15/2026	sábado	Jose	Cliente (Centro)	$45
+8/15/2026	sábado	Jose	Cliente (Centro)	$40
+8/15/2026	sábado	Jose	El caldito	$35
+8/15/2026	sábado	Jose	Cliente (Centro)	$60
+8/15/2026	sábado	Jose	Cliente (Centro)	$45
+8/15/2026	sábado	Jose	Cliente (Centro)	$40
+8/15/2026	sábado	Jose	Auroras	$45
+8/15/2026	sábado	Jose	Brama asador	$40
+8/15/2026	sábado	Jose	Cliente (Centro)	$45
+8/15/2026	sábado	Jose	Liliana	$40
+8/15/2026	sábado	Jose	Cliente (Centro)	$35
+8/14/2026	viernes	Jose	Auroras	$33
+8/14/2026	viernes	Jose	Chicken Krunch	$45
+8/14/2026	viernes	Jose	Auroras	$35
+8/14/2026	viernes	Jose	Chicken Krunch	$50
+8/14/2026	viernes	Jose	Cliente (Centro)	$50
+8/14/2026	viernes	Jose	Chicken Krunch	$50
+8/14/2026	viernes	Jose	Calle 7	$45
+8/14/2026	viernes	Jose	Chicken Krunch	$50
+8/14/2026	viernes	Jose	Calle 7	$50
+8/14/2026	viernes	Jose	Chicken Krunch	$45
+8/14/2026	viernes	Jose	Chicken Krunch	$40
+8/14/2026	viernes	Jose	Cliente (Centro)	$45
+8/14/2026	viernes	Jose	Cliente (Centro)	$45
+8/13/2026	jueves	Jose	Alitas D Lu	$45
+8/13/2026	jueves	Jose	Chicken Krunch	$150
+8/13/2026	jueves	Jose	Pauchis	$45
+8/13/2026	jueves	Jose	Cliente (Centro)	$40
+8/13/2026	jueves	Jose	Auroras	$45
+8/13/2026	jueves	Jose	Cliente (Centro)	$35
+8/12/2026	miércoles	Jose	Chicken Krunch	$45
+8/12/2026	miércoles	Jose	Cliente (Centro)	$45
+8/12/2026	miércoles	Jose	Cliente (Centro)	$45
+8/12/2026	miércoles	Jose	Cliente (Centro)	$35
+8/11/2026	martes	Jose	Texa pizza	$45
+8/11/2026	martes	Jose	Cliente (Centro)	$35
+8/11/2026	martes	Jose	Cliente (Centro)	$45
+8/10/2026	lunes	Jose	Alitas D Lu	$70
+8/10/2026	lunes	Jose	Texa pizza	$70
+8/10/2026	lunes	Jose	Alitas D Lu	$90
+8/10/2026	lunes	Jose	Cliente (Centro)	$45
+8/10/2026	lunes	Jose	Cliente (Centro)	$35
+8/10/2026	lunes	Jose	Sushi pingüinos	$55
+8/10/2026	lunes	Jose	Chicken Krunch	$45
+8/9/2026	domingo	Jose	Alitas D Lu	$50
+8/9/2026	domingo	Jose	LFT Elizabeth	$65
+8/9/2026	domingo	Jose	El caldito	$45
+8/9/2026	domingo	Jose	El caldito	$40
+8/9/2026	domingo	Jose	Cliente (Centro)	$45
+8/9/2026	domingo	Jose	Brama asador	$45
+8/9/2026	domingo	Jose	El caldito	$45
+8/9/2026	domingo	Jose	Cliente (Centro)	$35
+8/9/2026	domingo	Jose	El caldito	$35
+8/9/2026	domingo	Jose	Eder Gallegos	$45
+8/9/2026	domingo	Jose	El caldito	$45
+8/9/2026	domingo	Jose	El caldito	$40
+8/8/2026	sábado	Jose	Auroras	$35
+8/8/2026	sábado	Jose	Cliente (Centro)	$45
+8/8/2026	sábado	Jose	Cliente (Centro)	$40
+8/8/2026	sábado	Jose	Chicken Krunch	$55
+8/8/2026	sábado	Jose	Chicken Krunch	$40
+8/8/2026	sábado	Jose	Brama asador	$35
+8/8/2026	sábado	Jose	Brama asador	$35
+8/8/2026	sábado	Jose	Lilis Bc	$45
+8/7/2026	viernes	Jose	LFT Elizabeth	$40
+8/7/2026	viernes	Jose	Cliente (Centro)	$30
+8/7/2026	viernes	Jose	Sebas	$60
+8/7/2026	viernes	Jose	Tacos el patron	$70
+8/7/2026	viernes	Jose	Cliente (Centro)	$45
+8/7/2026	viernes	Jose	Cliente (Centro)	$35
+8/7/2026	viernes	Jose	Chicken Krunch	$40
+8/7/2026	viernes	Jose	Cuna de Sabores	$45
+8/7/2026	viernes	Jose	Cliente (Centro)	$40
+8/7/2026	viernes	Jose	Lilis Bc	$35
+8/6/2026	jueves	Jose	LFT Elizabeth	$45
+8/6/2026	jueves	Jose	Sarah	$50
+8/6/2026	jueves	Jose	Calle 7	$45
+8/6/2026	jueves	Jose	Chicken Krunch	$45
+8/6/2026	jueves	Jose	Lilis Bc	$40
+8/5/2026	miércoles	Jose	Texa pizza	$60
+8/5/2026	miércoles	Jose	Cliente (Centro)	$35
+8/5/2026	miércoles	Jose	Transporte	$50
+8/5/2026	miércoles	Jose	Cliente (Centro)	$45
+8/5/2026	miércoles	Jose	Liliana	$45
+8/5/2026	miércoles	Jose	Cliente (Centro)	$35
+8/5/2026	miércoles	Jose	Cliente (Centro)	$40
+8/4/2026	martes	Jose	Cliente (Centro)	$40
+8/3/2026	lunes	Jose	Texa pizza	$70
+8/3/2026	lunes	Jose	Sushi pingüinos	$40
+8/3/2026	lunes	Jose	Cliente (Centro)	$40
+8/3/2026	lunes	Jose	Cliente (Centro)	$35
+8/3/2026	lunes	Jose	El caldito	$35
+8/3/2026	lunes	Jose	Cliente (Centro)	$40
+8/3/2026	lunes	Jose	Sushi pingüinos	$45
+8/3/2026	lunes	Jose	Cliente (Centro)	$45
+8/2/2026	domingo	Jose	Alitas D Lu	$50
+8/2/2026	domingo	Jose	764 116 8951	$60
+8/2/2026	domingo	Jose	Sarah	$60
+8/2/2026	domingo	Jose	Calle 7	$55
+8/2/2026	domingo	Jose	Calle 7	$30
+8/2/2026	domingo	Jose	Calle 7	$60
+8/2/2026	domingo	Jose	El caldito	$45
+8/2/2026	domingo	Jose	El caldito	$45
+8/2/2026	domingo	Jose	El caldito	$45
+8/2/2026	domingo	Jose	El caldito	$35
+8/2/2026	domingo	Jose	El caldito	$45
+8/2/2026	domingo	Jose	Brama asador	$40
+8/2/2026	domingo	Jose	El caldito	$45
+8/2/2026	domingo	Jose	Cliente (Centro)	$40
+8/2/2026	domingo	Jose	El caldito	$45
+8/2/2026	domingo	Jose	El caldito	$40
+8/2/2026	domingo	Jose	El caldito	$35
+8/1/2026	sábado	Jose	Sebas	$85
+8/1/2026	sábado	Jose	Cliente (Centro)	$45
+8/1/2026	sábado	Jose	Chicken Krunch	$40
+8/1/2026	sábado	Jose	Calle 7	$40
+8/1/2026	sábado	Jose	LFT Elizabeth	$45
+8/1/2026	sábado	Jose	Cliente (Centro)	$35
+8/1/2026	sábado	Jose	Calle 7	$45
+8/1/2026	sábado	Jose	Brama asador	$45
+8/1/2026	sábado	Jose	Auroras	$45`;
