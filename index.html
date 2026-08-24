@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro de Ventas - Moto Service</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest"></script>
+<style>
+:root{--black:#0a0a0a;--dark:#1a1a1a;--gray:#f3f4f6;--gray-border:#e5e7eb;--gray-text:#6b7280;--red:#dc2626;--red-hover:#b91c1c;--white:#ffffff}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:var(--gray);display:flex;min-height:100vh}
+.panel-left{width:380px;background:var(--white);border-right:1px solid var(--gray-border);padding:32px;display:flex;flex-direction:column;position:sticky;top:0;height:100vh}
+.logo{display:flex;align-items:center;gap:12px;margin-bottom:36px}
+.logo-icon{width:40px;height:40px;background:var(--black);color:var(--white);display:grid;place-items:center;border-radius:10px}
+.logo h1{font-size:18px;font-weight:700;letter-spacing:-0.5px}
+.logo p{font-size:12px;color:var(--gray-text);font-weight:500}
+.form-group{margin-bottom:20px}
+.form-group label{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-text);display:block;margin-bottom:8px}
+.input-wrap{position:relative}
+.input-wrap i{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:var(--gray-text)}
+.input-wrap input, .input-wrap select{width:100%;height:48px;padding:0 14px 0 42px;border:1px solid var(--gray-border);border-radius:10px;background:var(--white);font-size:14px;font-weight:500;outline:none;transition:0.2s}
+.input-wrap input:focus, .input-wrap select:focus{border-color:var(--black);box-shadow:0 0 0 3px rgba(0,0,0,0.08)}
+.input-wrap select{appearance:none;cursor:pointer}
+.autocomplete-list{position:absolute;top:52px;left:0;right:0;background:var(--white);border:1px solid var(--gray-border);border-radius:10px;box-shadow:0 10px 25px rgba(0,0,0,0.08);z-index:10;max-height:160px;overflow:auto;display:none}
+.autocomplete-list div{padding:12px 14px;font-size:13px;cursor:pointer;border-bottom:1px solid var(--gray-border)}
+.autocomplete-list div:hover{background:var(--gray)}
+.btn-confirm{margin-top:auto;height:52px;background:var(--black);color:var(--white);border:none;border-radius:12px;font-size:14px;font-weight:600;letter-spacing:0.3px;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer;transition:0.2s}
+.btn-confirm:hover{background:var(--dark);transform:translateY(-1px)}
+.btn-confirm:active{transform:translateY(0)}
+.panel-right{flex:1;padding:32px}
+.header-right{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px}
+.header-right h2{font-size:22px;font-weight:700}
+.stats{display:flex;gap:12px}
+.stat{ background:var(--white); border:1px solid var(--gray-border); padding:14px 18px; border-radius:12px; min-width:140px}
+.stat span{font-size:11px;color:var(--gray-text);font-weight:600;text-transform:uppercase;letter-spacing:0.7px}
+.stat strong{font-size:20px;display:block;margin-top:4px}
+.stat.red{ background:var(--red); color:var(--white); border-color:var(--red)}
+.stat.red span{color:rgba(255,255,255,0.8)}
+.table-wrap{background:var(--white);border:1px solid var(--gray-border);border-radius:16px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.8px;color:var(--gray-text);padding:16px 20px;background:#fafafa;border-bottom:1px solid var(--gray-border)}
+td{padding:16px 20px;font-size:14px;font-weight:500;border-bottom:1px solid var(--gray-border)}
+td:last-child{font-weight:600}
+.badge{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.5px}
+.badge.mandado{background:#111;color:#fff}
+.badge.transporte{background:#fee2e2;color:var(--red);border:1px solid #fecaca}
+.empty{padding:60px;text-align:center;color:var(--gray-text)}
+.empty i{margin:0 auto 12px}
+</style>
+</head>
+<body>
+
+<div class="panel-left">
+  <div class="logo">
+    <div class="logo-icon"><i data-lucide="zap"></i></div>
+    <div><h1>MOTO LOG</h1><p>Control de Ventas</p></div>
+  </div>
+
+  <div class="form-group">
+    <label>Nombre del Cliente</label>
+    <div class="input-wrap">
+      <i data-lucide="user"></i>
+      <input type="text" id="cliente" placeholder="Ej. Carlos Medina" autocomplete="off" oninput="autocompletar()">
+      <div id="listaClientes" class="autocomplete-list"></div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Valor del Servicio</label>
+    <div class="input-wrap">
+      <i data-lucide="dollar-sign"></i>
+      <input type="number" id="valor" placeholder="0.00">
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>Tipo de Servicio</label>
+    <div class="input-wrap">
+      <i data-lucide="bike"></i>
+      <select id="tipo">
+        <option value="">Seleccionar servicio</option>
+        <option value="Moto Mandado">Moto Mandado</option>
+        <option value="Moto Transporte">Moto Transporte</option>
+      </select>
+    </div>
+  </div>
+
+  <button class="btn-confirm" onclick="confirmarVenta()">
+    <i data-lucide="check-circle-2"></i> Confirmar Venta
+  </button>
+</div>
+
+<div class="panel-right">
+  <div class="header-right">
+    <h2>Historial de Ventas</h2>
+    <div class="stats">
+      <div class="stat"><span>Ventas Hoy</span><strong id="totalVentas">0</strong></div>
+      <div class="stat red"><span>Total</span><strong id="totalMonto">$0</strong></div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Cliente</th>
+          <th>Servicio</th>
+          <th>Valor</th>
+          <th>Fecha / Hora</th>
+        </tr>
+      </thead>
+      <tbody id="tablaHistorial"></tbody>
+    </table>
+    <div id="emptyState" class="empty">
+      <i data-lucide="inbox" style="width:32px;height:32px"></i>
+      <p>No hay ventas registradas aún</p>
+    </div>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+let ventas = JSON.parse(localStorage.getItem('ventasMoto') || '[]');
+let clientes = JSON.parse(localStorage.getItem('clientesMoto') || '[]');
+
+function autocompletar(){
+  const input = document.getElementById('cliente').value.toLowerCase();
+  const lista = document.getElementById('listaClientes');
+  if(!input){lista.style.display='none';return;}
+  const filtrados = clientes.filter(c=>c.toLowerCase().includes(input));
+  if(filtrados.length===0){lista.style.display='none';return;}
+  lista.innerHTML = filtrados.map(c=>`<div onclick="seleccionarCliente('${c}')">${c}</div>`).join('');
+  lista.style.display='block';
+}
+function seleccionarCliente(nombre){
+  document.getElementById('cliente').value=nombre;
+  document.getElementById('listaClientes').style.display='none';
+}
+function confirmarVenta(){
+  const cliente = document.getElementById('cliente').value.trim();
+  const valor = parseFloat(document.getElementById('valor').value);
+  const tipo = document.getElementById('tipo').value;
+  if(!cliente || !valor || !tipo){alert('Completa todos los campos');return;}
+  const ahora = new Date();
+  const venta = {cliente, valor, tipo, fecha: ahora.toLocaleDateString(), hora: ahora.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'}), timestamp: ahora.getTime()};
+  ventas.unshift(venta);
+  if(!clientes.includes(cliente)){clientes.push(cliente); localStorage.setItem('clientesMoto', JSON.stringify(clientes));}
+  localStorage.setItem('ventasMoto', JSON.stringify(ventas));
+  document.getElementById('cliente').value=''; document.getElementById('valor').value=''; document.getElementById('tipo').value='';
+  renderHistorial();
+}
+function renderHistorial(){
+  const tbody = document.getElementById('tablaHistorial');
+  const empty = document.getElementById('emptyState');
+  if(ventas.length===0){tbody.innerHTML=''; empty.style.display='block'; document.getElementById('totalVentas').innerText='0'; document.getElementById('totalMonto').innerText='$0'; return;}
+  empty.style.display='none';
+  tbody.innerHTML = ventas.map(v=>`
+    <tr>
+      <td>${v.cliente}</td>
+      <td><span class="badge ${v.tipo==='Moto Mandado'?'mandado':'transporte'}">${v.tipo.toUpperCase()}</span></td>
+      <td>$${v.valor.toFixed(2)}</td>
+      <td style="color:#6b7280;font-size:13px">${v.fecha} - ${v.hora}</td>
+    </tr>`).join('');
+  const hoy = new Date().toLocaleDateString();
+  const ventasHoy = ventas.filter(v=>v.fecha===hoy);
+  document.getElementById('totalVentas').innerText = ventasHoy.length;
+  document.getElementById('totalMonto').innerText = '$' + ventasHoy.reduce((a,b)=>a+b.valor,0).toFixed(2);
+}
+document.addEventListener('click', e=>{ if(!e.target.closest('.input-wrap')) document.getElementById('listaClientes').style.display='none'; });
+renderHistorial();
+</script>
+</body>
+</html>
