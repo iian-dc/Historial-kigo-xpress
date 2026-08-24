@@ -10,30 +10,37 @@
 :root{--black:#0a0a0a;--gray:#f2f3f5;--border:#e5e7eb;--text:#6b7280;--red:#dc2626;--white:#fff}
 *{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
 body{background:var(--gray);min-height:100vh;padding-bottom:80px}
-.top{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:10}
-.view{display:none;padding:16px;max-width:650px;margin:0 auto}.view.active{display:block}
-.card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:18px}
-.group{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.group label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-.wrap{position:relative}.wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#9ca3af}
-.wrap input,.wrap select{width:100%;height:52px;padding:0 12px 0 42px;border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:500;outline:none}
-.btn{width:100%;height:54px;background:var(--black);color:#fff;border:none;border-radius:14px;font-weight:700;display:flex;gap:8px;align-items:center;justify-content:center;cursor:pointer}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
-.stat{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:14px}
-.stat span{font-size:9px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.7px}
-.stat strong{font-size:19px;display:block;margin-top:4px}
+.top{height:52px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:sticky;top:0;z-index:10;font-size:14px}
+.view{display:none;padding:12px;max-width:650px;margin:0 auto}.view.active{display:block}
+.card{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:16px}
+.group{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+.group label{font-size:9px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--text)}
+.wrap{position:relative}.wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:#9ca3af}
+.wrap input,.wrap select{width:100%;height:48px;padding:0 12px 0 38px;border:1.5px solid var(--border);border-radius:12px;font-size:13px;font-weight:500;outline:none}
+.btn{width:100%;height:50px;background:var(--black);color:#fff;border:none;border-radius:12px;font-weight:700;display:flex;gap:6px;align-items:center;justify-content:center;cursor:pointer;font-size:13px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px}
+.stat{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:10px}
+.stat span{font-size:8px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.6px}
+.stat strong{font-size:15px;display:block;margin-top:2px}
 .stat.red{background:var(--red);color:#fff;border-color:var(--red)}.stat.red span{color:rgba(255,255,255,.8)}
 .stat.dark{background:var(--black);color:#fff}.stat.dark span{color:#9ca3af}
-.date-bar{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center;margin-bottom:12px}
-.date-bar input{flex:1;height:40px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-weight:600}
-.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-table{width:100%;border-collapse:collapse}th{font-size:9px;text-transform:uppercase;color:var(--text);text-align:left;padding:12px;background:#fafafa;border-bottom:1px solid var(--border)}td{padding:12px;font-size:13px;border-bottom:1px solid #f3f4f6}
-.bottom{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:20}
-.bottom button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:700;color:var(--text);cursor:pointer}.bottom button.active{color:var(--black)}
+.date-bar{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:10px;display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.date-bar input{flex:1;height:36px;border:1.5px solid var(--border);border-radius:8px;padding:0 10px;font-weight:600;font-size:12px}
+.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:12px;overflow:hidden}
+table{width:100%;border-collapse:collapse}
+th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padding:8px 10px;background:#fafafa;border-bottom:1px solid var(--border);letter-spacing:.5px}
+td{padding:8px 10px;font-size:11px;border-bottom:1px solid #f3f4f6;line-height:1.2}
+td b{font-size:11px}
+td.sub{font-size:9px;color:#6b7280}
+.actions{display:flex;gap:4px;justify-content:flex-end}
+.icon{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;cursor:pointer}
+.icon:hover{background:#f9fafb}
+.bottom{position:fixed;bottom:0;left:0;right:0;height:68px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:20}
+.bottom button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:700;color:var(--text);cursor:pointer}.bottom button.active{color:var(--black)}
 </style>
 </head>
 <body>
-<div class="top"><b>KIGO XPRESS</b><i data-lucide="bike" style="width:20px"></i></div>
+<div class="top"><b>KIGO XPRESS</b><i data-lucide="bike" style="width:18px"></i></div>
 
 <div id="view-inicio" class="view active">
   <div class="card">
@@ -41,33 +48,37 @@ table{width:100%;border-collapse:collapse}th{font-size:9px;text-transform:upperc
     <div class="group"><label>Cliente / Comercio</label><div class="wrap"><i data-lucide="store"></i><input type="text" id="cliente" placeholder="Ej. El caldito"></div></div>
     <div class="group"><label>Valor del servicio</label><div class="wrap"><i data-lucide="dollar-sign"></i><input type="number" id="valor" placeholder="0"></div></div>
     <div class="group"><label>Repartidor</label><div class="wrap"><i data-lucide="user"></i><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
-    <button class="btn" onclick="guardar()"><i data-lucide="check"></i>Confirmar Venta</button>
+    <button class="btn" onclick="guardar()"><i data-lucide="check" style="width:16px"></i><span id="btnT">Confirmar Venta</span></button>
+    <button id="btnC" onclick="cancelar()" style="display:none;width:100%;height:36px;background:none;border:none;font-size:11px;font-weight:600;color:#6b7280;cursor:pointer;margin-top:6px">Cancelar edición</button>
   </div>
 </div>
 
 <div id="view-historial" class="view">
-  <div class="date-bar"><i data-lucide="calendar-days" style="width:18px;color:#6b7280"></i><input type="date" id="filtroFecha" onchange="filtrarFecha()"><button onclick="limpiarFiltro()" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer">Todos</button></div>
+  <div class="date-bar"><i data-lucide="calendar-days" style="width:16px;color:#6b7280"></i><input type="date" id="filtroFecha" onchange="filtrarFecha()"><button onclick="limpiarFiltro()" style="height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer;font-size:11px">Todos</button></div>
   <div class="stats">
     <div class="stat"><span>Pedidos día</span><strong id="sCount">0</strong></div>
     <div class="stat"><span>Bruto día</span><strong id="sBruto">$0</strong></div>
     <div class="stat dark"><span>Repartidor día</span><strong id="sRep">$0</strong></div>
     <div class="stat red"><span>KIGO día</span><strong id="sKigo">$0</strong></div>
   </div>
-  <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Bruto</th><th>KIGO</th><th>Repar.</th></tr></thead><tbody id="tbody"></tbody></table></div>
+  <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Bruto</th><th>KIGO</th><th>Repar.</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
 </div>
 
 <div class="bottom">
-  <button id="b-inicio" class="active" onclick="showView('inicio')"><i data-lucide="home"></i>INICIO</button>
-  <button id="b-historial" onclick="showView('historial')"><i data-lucide="history"></i>HISTORIAL</button>
+  <button id="b-inicio" class="active" onclick="showView('inicio')"><i data-lucide="home" style="width:18px"></i>INICIO</button>
+  <button id="b-historial" onclick="showView('historial')"><i data-lucide="history" style="width:18px"></i>HISTORIAL</button>
 </div>
 
 <script>
-let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null;
+let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,editIndex=-1;
 function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));document.getElementById('b-'+v).classList.add('active');}
-function guardar(){let fecha=document.getElementById('fecha').value||new Date().toISOString().split('T')[0];let cliente=document.getElementById('cliente').value.trim();let valor=parseInt(document.getElementById('valor').value);let repa=document.getElementById('repa').value;if(!cliente||!valor)return alert('Completa datos');ventas.unshift({iso:fecha,cliente,valor,repa,kygo:5,repartidor:valor-5});localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';render();showView('historial');}
+function guardar(){let fecha=document.getElementById('fecha').value||new Date().toISOString().split('T')[0];let cliente=document.getElementById('cliente').value.trim();let valor=parseInt(document.getElementById('valor').value);let repa=document.getElementById('repa').value;if(!cliente||!valor)return alert('Completa datos');let obj={iso:fecha,cliente,valor,repa,kygo:5,repartidor:valor-5};if(editIndex>=0){ventas[editIndex]=obj;editIndex=-1;document.getElementById('btnT').innerText='Confirmar Venta';document.getElementById('btnC').style.display='none';}else{ventas.unshift(obj);}localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';render();showView('historial');}
+function cancelar(){document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';document.getElementById('btnT').innerText='Confirmar Venta';editIndex=-1;document.getElementById('btnC').style.display='none';}
+function editar(i){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);let v=ventas[realIdx];document.getElementById('cliente').value=v.cliente;document.getElementById('valor').value=v.valor;document.getElementById('repa').value=v.repa;document.getElementById('fecha').value=v.iso;editIndex=realIdx;document.getElementById('btnT').innerText='Guardar Cambios';document.getElementById('btnC').style.display='block';showView('inicio');}
+function eliminar(i){if(!confirm('¿Eliminar este registro?'))return;let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);ventas.splice(realIdx,1);localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();}
 function filtrarFecha(){filtroFecha=document.getElementById('filtroFecha').value||null;render();}
 function limpiarFiltro(){document.getElementById('filtroFecha').value='';filtroFecha=null;render();}
-function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;document.getElementById('tbody').innerHTML=list.map(v=>`<tr><td>${v.iso}</td><td><b>${v.cliente}</b><div style="font-size:10px;color:#6b7280">${v.repa}</div></td><td>$${v.valor}</td><td style="color:#dc2626;font-weight:700">$5</td><td style="font-weight:700">$${v.repartidor}</td></tr>`).join('');let dia=filtroFecha||new Date().toISOString().split('T')[0];let dList=ventas.filter(v=>v.iso===dia);document.getElementById('sCount').innerText=dList.length;document.getElementById('sBruto').innerText='$'+dList.reduce((a,b)=>a+b.valor,0);document.getElementById('sRep').innerText='$'+dList.reduce((a,b)=>a+b.repartidor,0);document.getElementById('sKigo').innerText='$'+dList.reduce((a,b)=>a+b.kygo,0);}
+function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;document.getElementById('tbody').innerHTML=list.map((v,i)=>`<tr><td style="font-size:10px">${v.iso.slice(5)}</td><td><b>${v.cliente}</b><div class="sub">${v.repa}</div></td><td>$${v.valor}</td><td style="color:#dc2626;font-weight:700">$5</td><td style="font-weight:700">$${v.repartidor}</td><td><div class="actions"><button class="icon" onclick="editar(${i})" title="Editar"><i data-lucide="pencil" style="width:12px;height:12px"></i></button><button class="icon" onclick="eliminar(${i})" title="Eliminar"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button></div></td></tr>`).join('');lucide.createIcons();let dia=filtroFecha||new Date().toISOString().split('T')[0];let dList=ventas.filter(v=>v.iso===dia);document.getElementById('sCount').innerText=dList.length;document.getElementById('sBruto').innerText='$'+dList.reduce((a,b)=>a+b.valor,0);document.getElementById('sRep').innerText='$'+dList.reduce((a,b)=>a+b.repartidor,0);document.getElementById('sKigo').innerText='$'+dList.reduce((a,b)=>a+b.kygo,0);}
 render();lucide.createIcons();
 </script>
 </body>
