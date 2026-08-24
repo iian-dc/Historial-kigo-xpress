@@ -1,90 +1,308 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>KIGO XPRESS</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://unpkg.com/lucide@latest"></script>
-<style>
-:root{--black:#0a0a0a;--gray:#f2f3f5;--border:#e5e7eb;--text:#6b7280;--red:#dc2626;--white:#fff}
-*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
-body{background:var(--gray);min-height:100vh;padding-bottom:80px}
-.top{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:10}
-.top b{letter-spacing:-0.5px;font-weight:800}
-.view{display:none;padding:16px;max-width:600px;margin:0 auto}
-.view.active{display:block}
-.card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:18px}
-.group{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
-.group label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}
-.wrap{position:relative}
-.wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#9ca3af}
-.wrap input,.wrap select{width:100%;height:52px;padding:0 12px 0 42px;border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:500;outline:none}
-.wrap input:focus{border-color:var(--black)}
-.btn{width:100%;height:54px;background:var(--black);color:#fff;border:none;border-radius:14px;font-weight:700;display:flex;gap:8px;align-items:center;justify-content:center;cursor:pointer}
-.btn.editing{background:#fff;color:#000;border:1.5px solid #000}
-.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
-.stat{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:14px}
-.stat span{font-size:9px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.7px}
-.stat strong{font-size:19px;display:block;margin-top:4px}
-.stat.red{background:var(--red);color:#fff;border-color:var(--red)}.stat.red span{color:rgba(255,255,255,.8)}
-.stat.dark{background:var(--black);color:#fff}.stat.dark span{color:#9ca3af}
-.date-bar{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center;margin-bottom:12px}
-.date-bar input{flex:1;height:40px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-weight:600}
-.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden}
-table{width:100%;border-collapse:collapse}
-th{font-size:9px;text-transform:uppercase;color:var(--text);text-align:left;padding:12px;background:#fafafa;border-bottom:1px solid var(--border)}
-td{padding:12px;font-size:13px;border-bottom:1px solid #f3f4f6}
-.actions{display:flex;gap:6px;justify-content:flex-end}
-.icon{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;cursor:pointer}
-.bottom{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:20}
-.bottom button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:700;letter-spacing:.6px;color:var(--text);cursor:pointer}
-.bottom button.active{color:var(--black)}
-.bottom button.active i{color:var(--black)}
-#list{position:absolute;top:56px;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.08);display:none;z-index:10;max-height:150px;overflow:auto}
-</style>
-</head>
-<body>
-<div class="top"><b>KIGO XPRESS</b><i data-lucide="bike" style="width:20px"></i></div>
-
-<!-- INICIO -->
-<div id="view-inicio" class="view active">
-  <div class="card">
-    <div class="group"><label>Fecha del servicio</label><div class="wrap"><i data-lucide="calendar"></i><input type="date" id="fecha"></div></div>
-    <div class="group"><label>Cliente / Comercio</label><div class="wrap"><i data-lucide="store"></i><input type="text" id="cliente" placeholder="Ej. El caldito" oninput="auto()"><div id="list"></div></div></div>
-    <div class="group"><label>Valor del servicio</label><div class="wrap"><i data-lucide="dollar-sign"></i><input type="number" id="valor" placeholder="0"></div></div>
-    <div class="group"><label>Repartidor</label><div class="wrap"><i data-lucide="user"></i><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
-    <div class="group"><label>Tipo</label><div class="wrap"><i data-lucide="bike"></i><select id="tipo"><option>Moto Mandado</option><option>Moto Transporte</option></select></div></div>
-    <button class="btn" id="btnMain" onclick="guardar()"><i data-lucide="check"></i><span id="btnT">Confirmar Venta</span></button>
-    <button id="btnC" onclick="cancelar()" style="display:none;width:100%;height:40px;background:none;border:none;font-size:12px;font-weight:600;color:#6b7280;cursor:pointer;margin-top:8px">Cancelar edición</button>
-  </div>
-  <div style="margin-top:12px;background:#111;color:#fff;border-radius:14px;padding:14px;font-size:11px;line-height:1.5"><b>KIGO XPRESS:</b> $5 por pedido para KIGO, el resto para repartidor.</div>
-</div>
-
-<!-- HISTORIAL -->
-<div id="view-historial" class="view">
-  <div class="date-bar"><i data-lucide="calendar-days" style="width:18px;color:#6b7280"></i><input type="date" id="filtroFecha" onchange="filtrarFecha()"><button onclick="limpiarFiltro()" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer">Todos</button></div>
-
-  <div class="stats">
-    <div class="stat"><span>Pedidos del día seleccionado</span><strong id="sCount">0</strong></div>
-    <div class="stat"><span>Bruto del día</span><strong id="sBruto">$0</strong></div>
-    <div class="stat dark"><span>Repartidor del día</span><strong id="sRep">$0</strong></div>
-    <div class="stat red"><span>KIGO del día ($5 c/u)</span><strong id="sKigo">$0</strong></div>
-  </div>
-  <div class="stats">
-    <div class="stat"><span>Pedidos Mes Actual</span><strong id="sMesCount">0</strong></div>
-    <div class="stat"><span>Repartidor Mes</span><strong id="sRepMes">$0</strong></div>
-  </div>
-
-  <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Bruto</th><th>KIGO</th><th>Repar.</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
-</div>
-
-<div class="bottom">
-  <button id="b-inicio" class="active" onclick="showView('inicio')"><i data-lucide="home"></i>INICIO</button>
-  <button id="b-historial" onclick="showView('historial')"><i data-lucide="history"></i>HISTORIAL</button>
-</div>
-
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>KIGO XPRESS FINAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"><script src="https://unpkg.com/lucide@latest"></script>
+<style>:root{--black:#0a0a0a;--gray:#f2f3f5;--border:#e5e7eb;--text:#6b7280;--red:#dc2626;--white:#fff}*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}body{background:var(--gray);min-height:100vh;padding-bottom:80px}.top{height:56px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;position:sticky;top:0;z-index:10}.view{display:none;padding:16px;max-width:650px;margin:0 auto}.view.active{display:block}.card{background:var(--white);border:1px solid var(--border);border-radius:18px;padding:18px}.group{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}.group label{font-size:10px;font-weight:700;letter-spacing:.8px;text-transform:uppercase}.wrap{position:relative}.wrap i{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:18px;height:18px;color:#9ca3af}.wrap input,.wrap select{width:100%;height:52px;padding:0 12px 0 42px;border:1.5px solid var(--border);border-radius:14px;font-size:14px;font-weight:500;outline:none}.btn{width:100%;height:54px;background:var(--black);color:#fff;border:none;border-radius:14px;font-weight:700;display:flex;gap:8px;align-items:center;justify-content:center;cursor:pointer}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}.stat{background:var(--white);border:1px solid var(--border);border-radius:16px;padding:14px}.stat span{font-size:9px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:.7px}.stat strong{font-size:19px;display:block;margin-top:4px}.stat.red{background:var(--red);color:#fff;border-color:var(--red)}.stat.red span{color:rgba(255,255,255,.8)}.stat.dark{background:var(--black);color:#fff}.stat.dark span{color:#9ca3af}.date-bar{background:var(--white);border:1px solid var(--border);border-radius:14px;padding:12px;display:flex;gap:10px;align-items:center;margin-bottom:12px}.date-bar input{flex:1;height:40px;border:1.5px solid var(--border);border-radius:10px;padding:0 12px;font-weight:600}.table-wrap{background:var(--white);border:1px solid var(--border);border-radius:16px;overflow:hidden}table{width:100%;border-collapse:collapse}th{font-size:9px;text-transform:uppercase;color:var(--text);text-align:left;padding:12px;background:#fafafa;border-bottom:1px solid var(--border)}td{padding:12px;font-size:13px;border-bottom:1px solid #f3f4f6}.actions{display:flex;gap:6px;justify-content:flex-end}.icon{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;cursor:pointer}.bottom{position:fixed;bottom:0;left:0;right:0;height:72px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:20}.bottom button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:10px;font-weight:700;color:var(--text);cursor:pointer}.bottom button.active{color:var(--black)}#list{position:absolute;top:56px;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:12px;box-shadow:0 8px 20px rgba(0,0,0,.08);display:none;z-index:10;max-height:150px;overflow:auto}</style></head>
+<body><div class="top"><b>KIGO XPRESS - 474 VENTAS</b><i data-lucide="bike" style="width:20px"></i></div>
+<div id="view-inicio" class="view active"><div class="card"><div class="group"><label>Fecha del servicio</label><div class="wrap"><i data-lucide="calendar"></i><input type="date" id="fecha"></div></div><div class="group"><label>Cliente / Comercio</label><div class="wrap"><i data-lucide="store"></i><input type="text" id="cliente" placeholder="Ej. El caldito" oninput="auto()"><div id="list"></div></div></div><div class="group"><label>Valor del servicio</label><div class="wrap"><i data-lucide="dollar-sign"></i><input type="number" id="valor" placeholder="0"></div></div><div class="group"><label>Repartidor</label><div class="wrap"><i data-lucide="user"></i><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div><button class="btn" onclick="guardar()"><i data-lucide="check"></i><span id="btnT">Confirmar Venta</span></button><button id="btnC" onclick="cancelar()" style="display:none;width:100%;height:40px;background:none;border:none;font-size:12px;font-weight:600;color:#6b7280;cursor:pointer;margin-top:8px">Cancelar</button></div></div>
+<div id="view-historial" class="view"><div class="date-bar"><i data-lucide="calendar-days" style="width:18px;color:#6b7280"></i><input type="date" id="filtroFecha" onchange="filtrarFecha()"><button onclick="limpiarFiltro()" style="height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer">Todos</button></div><div class="stats"><div class="stat"><span>Pedidos dia</span><strong id="sCount">0</strong></div><div class="stat"><span>Bruto dia</span><strong id="sBruto">$0</strong></div><div class="stat dark"><span>Repartidor dia</span><strong id="sRep">$0</strong></div><div class="stat red"><span>KIGO dia</span><strong id="sKigo">$0</strong></div></div><div class="stats"><div class="stat"><span>Pedidos Mes</span><strong id="sMesCount">0</strong></div><div class="stat"><span>Repartidor Mes</span><strong id="sRepMes">$0</strong></div></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Bruto</th><th>KIGO</th><th>Repar.</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div></div>
+<div class="bottom"><button id="b-inicio" class="active" onclick="showView('inicio')"><i data-lucide="home"></i>INICIO</button><button id="b-historial" onclick="showView('historial')"><i data-lucide="history"></i>HISTORIAL</button></div>
 <script>
-const DATA_RAW = `8/23/2026	domingo	Jose	Texa pizza	$45
+const DATA_RAW = `6/30/2026	martes	Jose	Cliente (Centro)	$50
+6/30/2026	martes	Jose	Cliente (Centro)	$35
+6/30/2026	martes	Jose	Cliente (Centro)	$40
+6/30/2026	martes	Jose	Cliente (Centro)	$40
+6/30/2026	martes	Jose	Cliente (Centro)	$35
+6/30/2026	martes	Jose	Alas de a Litro	$35
+6/30/2026	martes	Jose	Calle 7	$35
+6/30/2026	martes	Jose	Cliente (Centro)	$35
+6/30/2026	martes	Jose	Cliente (Centro)	$40
+6/30/2026	martes	Jose	Mi General Swings	$50
+6/30/2026	martes	Jose	Pizzas 8	$50
+6/30/2026	martes	Jose	Búfalo Alitas Y Chelas	$50
+6/30/2026	martes	Jose	Alas de a Litro	$35
+6/30/2026	martes	Jose	Hamburguesas Armando	$45
+6/29/2026	lunes	Diego	Cliente (Centro)	$35
+6/29/2026	lunes	Diego	Cliente (Centro)	$35
+6/29/2026	lunes	Diego	Cliente (Centro)	$40
+6/29/2026	lunes	Diego	Elchikencaps	$45
+6/29/2026	lunes	Diego	Alas de a Litro	$35
+6/29/2026	lunes	Diego	Alas de a Litro	$35
+6/28/2026	domingo	Jose	Cliente (Centro)	$35
+6/28/2026	domingo	Jose	418 335 3222	$40
+6/28/2026	domingo	Jose	El caldito	$30
+6/28/2026	domingo	Jose	Lupita Aguilar	$40
+6/28/2026	domingo	Jose	Brasa Burguer	$45
+6/27/2026	sábado	Jose	Cliente (Centro)	$35
+6/27/2026	sábado	Jose	El caldito	$35
+6/27/2026	sábado	Jose	Cliente (Centro)	$40
+6/27/2026	sábado	Jose	Brama asador	$40
+6/27/2026	sábado	Jose	Malele	$45
+6/27/2026	sábado	Jose	Cliente (Centro)	$40
+6/27/2026	sábado	Jose	Cliente (Centro)	$40
+6/27/2026	sábado	Jose	Mi General Swings	$60
+6/27/2026	sábado	Jose	Mi General Swings	$50
+6/26/2026	viernes	Jose	Cuna de sabores	$35
+6/26/2026	viernes	Jose	Cliente (Centro)	$40
+6/26/2026	viernes	Jose	Cliente (Centro)	$35
+6/26/2026	viernes	Jose	Cliente (Centro)	$35
+6/26/2026	viernes	Jose	Cliente (Centro)	$35
+6/26/2026	viernes	Jose	El caldito	$30
+6/26/2026	viernes	Jose	Cliente (Centro)	$55
+6/26/2026	viernes	Jose	Cliente (Centro)	$40
+6/26/2026	viernes	Jose	Cuna de sabores	$35
+6/26/2026	viernes	Jose	Cliente (Centro)	$35
+6/26/2026	viernes	Jose	El caldito	$30
+6/26/2026	viernes	Jose	Calle 7	$40
+6/26/2026	viernes	Jose	Calle 7	$40
+6/26/2026	viernes	Jose	Calle 7	$60
+6/25/2026	jueves	Jose	Cliente (Centro)	$40
+6/25/2026	jueves	Jose	Patron Alaye	$35
+6/25/2026	jueves	Jose	El caldito	$30
+6/24/2026	miércoles	Diego	Cuna de sabores	$35
+6/24/2026	miércoles	Jose	Cliente (Centro)	$40
+6/24/2026	miércoles	Jose	Cliente (Centro)	$35
+6/24/2026	miércoles	Jose	Cliente (Centro)	$35
+6/24/2026	miércoles	Jose	Brama asador	$40
+6/23/2026	martes	Diego	Cuna de sabores	$35
+6/23/2026	martes	Jose	Cliente (Centro)	$35
+6/23/2026	martes	Jose	Cliente (Centro)	$35
+6/23/2026	martes	Jose	Cliente (Centro)	$40
+6/23/2026	martes	Jose	Cliente (Centro)	$40
+6/23/2026	martes	Jose	Calle 7	$40
+6/23/2026	martes	Jose	Cliente (Centro)	$35
+6/22/2026	lunes	Jose	Cliente (Centro)	$35
+6/22/2026	lunes	Jose	Cliente (Centro)	$35
+6/22/2026	lunes	Jose	Cliente (Centro)	$40
+6/22/2026	lunes	Jose	Calle 7	$35
+6/22/2026	lunes	Jose	Mi General Swings	$40
+6/22/2026	lunes	Jose	Calle 7	$40
+6/21/2026	domingo	Jose	418 335 3222	$40
+6/21/2026	domingo	Jose	Cuna de sabores	$35
+6/21/2026	domingo	Jose	El caldito	$30
+6/21/2026	domingo	Jose	Daniela Medina	$45
+6/21/2026	domingo	Jose	Daniela Medina	$40
+6/21/2026	domingo	Jose	Sushi pingüinos	$45
+6/21/2026	domingo	Jose	Mi General Swings	$55
+6/21/2026	domingo	Jose	Mi General Swings	$55
+6/21/2026	domingo	Jose	Alitas D Lu	$55
+6/21/2026	domingo	Jose	Mi General Swings	$55
+6/21/2026	domingo	Jose	Hamburguesas Armando	$60
+6/20/2026	sábado	Jose	Cliente (Centro)	$35
+6/20/2026	sábado	Jose	Cliente (Centro)	$35
+6/20/2026	sábado	Jose	Patron Alaye	$35
+6/20/2026	sábado	Jose	Cliente (Centro)	$35
+6/20/2026	sábado	Jose	Mi General Swings	$40
+6/20/2026	sábado	Jose	Mi General Swings	$40
+6/20/2026	sábado	Jose	Mi General Swings	$40
+6/19/2026	viernes	Jose	El caldito	$30
+6/19/2026	viernes	Jose	Cliente (Centro)	$35
+6/19/2026	viernes	Jose	Calle 7	$40
+6/19/2026	viernes	Jose	Calle 7	$40
+6/18/2026	jueves	Jose	Cliente (Centro)	$45
+6/18/2026	jueves	Jose	Cliente (Centro)	$35
+6/18/2026	jueves	Jose	El caldito	$30
+6/18/2026	jueves	Jose	Cliente (Centro)	$35
+6/17/2026	miércoles	Jose	Calle 7	$40
+6/16/2026	martes	Jose	Calle 7	$35
+6/16/2026	martes	Jose	Cliente (Centro)	$35
+6/16/2026	martes	Jose	Cliente (Centro)	$30
+6/16/2026	martes	Jose	Cliente (Centro)	$35
+6/16/2026	martes	Jose	Calle 7	$30
+6/16/2026	martes	Jose	Calle 7	$35
+6/16/2026	martes	Jose	Cliente (Centro)	$35
+6/16/2026	martes	Jose	Calle 7	$35
+6/15/2026	lunes	Jose	Cliente (Centro)	$35
+6/15/2026	lunes	Jose	Cliente (Centro)	$40
+6/15/2026	lunes	Jose	Burger Pack	$30
+6/15/2026	lunes	Jose	Calle 7	$35
+6/15/2026	lunes	Jose	Calle 7	$35
+7/31/2026	viernes	Jose	Texa pizza	$50
+7/31/2026	viernes	Jose	Pauchis	$35
+7/31/2026	viernes	Jose	Calle 7	$40
+7/31/2026	viernes	Jose	Cliente (Centro)	$35
+7/31/2026	viernes	Jose	Calle 7	$40
+7/31/2026	viernes	Jose	Transporte	$45
+7/31/2026	viernes	Jose	Lilis Bc	$35
+7/31/2026	viernes	Jose	Cliente (Centro)	$40
+7/31/2026	viernes	Jose	Transporte	$45
+7/31/2026	viernes	Jose	Transporte	$45
+7/31/2026	viernes	Jose	Lilis Bc	$35
+7/31/2026	viernes	Jose	Lilis Bc	$40
+7/31/2026	viernes	Jose	Liliana	$50
+7/30/2026	jueves	Jose	Alas de a Litro	$35
+7/30/2026	jueves	Jose	Alas de a Litro	$35
+7/30/2026	jueves	Jose	Tacos el patron	$40
+7/30/2026	jueves	Jose	Tacos el patron	$50
+7/30/2026	jueves	Jose	Sarah	$40
+7/30/2026	jueves	Jose	Transporte	$55
+7/30/2026	jueves	Jose	Transporte	$45
+7/30/2026	jueves	Jose	Sarah	$35
+7/29/2026	miércoles	Jose	Lilis Bc	$45
+7/29/2026	miércoles	Jose	Chicken Krunch	$45
+7/29/2026	miércoles	Jose	Eat sazon	$35
+7/29/2026	miércoles	Jose	Cliente (Centro)	$35
+7/28/2026	martes	Jose	Texa pizza	$70
+7/28/2026	martes	Jose	Texa pizza	$40
+7/28/2026	martes	Jose	Sushi pingüinos	$45
+7/28/2026	martes	Jose	Calle 7	$40
+7/28/2026	martes	Jose	Cliente (Centro)	$35
+7/28/2026	martes	Jose	Cliente (Centro)	$40
+7/28/2026	martes	Jose	Cliente (Centro)	$50
+7/28/2026	martes	Jose	Cliente (Centro)	$35
+7/28/2026	martes	Jose	Cliente (Centro)	$55
+7/27/2026	lunes	Jose	Calle 7	$45
+7/27/2026	lunes	Jose	Cliente (Centro)	$45
+7/26/2026	domingo	Jose	Texa pizza	$40
+7/25/2026	sábado	Jose	Texa pizza	$40
+7/25/2026	sábado	Jose	Búfalo Alitas Y Chelas	$40
+7/25/2026	sábado	Jose	LFT Elizabeth	$50
+7/25/2026	sábado	Jose	Chicken Krunch	$40
+7/25/2026	sábado	Jose	Chicken Krunch	$60
+7/24/2026	viernes	Jose	Chicken Krunch	$40
+7/23/2026	jueves	Jose	Cliente (Centro)	$40
+7/23/2026	jueves	Jose	Cliente (Centro)	$35
+7/22/2026	miércoles	Jose	Cliente (Centro)	$40
+7/22/2026	miércoles	Jose	LFT Elizabeth	$50
+7/22/2026	miércoles	Jose	Cliente (Centro)	$45
+7/22/2026	miércoles	Jose	Cliente (Centro)	$50
+7/22/2026	miércoles	Jose	Cliente (Centro)	$45
+7/22/2026	miércoles	Jose	Liliana	$40
+7/21/2026	martes	Jose	Cliente (Centro)	$40
+7/21/2026	martes	Jose	Cuna de sabores	$55
+7/21/2026	martes	Jose	Cliente (Centro)	$35
+7/20/2026	lunes	Jose	Calle 7	$45
+7/20/2026	lunes	Jose	Eat sazon	$30
+7/20/2026	lunes	Jose	Liliana	$40
+7/20/2026	lunes	Jose	Calle 7	$55
+7/20/2026	lunes	Jose	Cliente (Centro)	$35
+7/19/2026	domingo	Jose	El caldito	$55
+7/19/2026	domingo	Jose	Chicken Krunch	$45
+7/19/2026	domingo	Jose	LFT Elizabeth	$50
+7/19/2026	domingo	Jose	Chicken Krunch	$45
+7/19/2026	domingo	Jose	LFT Elizabeth	$55
+7/19/2026	domingo	Jose	Brama asador	$50
+7/19/2026	domingo	Jose	Eder Gallegos	$50
+7/18/2026	sábado	Jose	Flores	$70
+7/18/2026	sábado	Jose	Calle 7	$50
+7/18/2026	sábado	Jose	Sushi pingüinos	$45
+7/18/2026	sábado	Jose	Calle 7	$45
+7/18/2026	sábado	Jose	Pauchis	$40
+7/18/2026	sábado	Jose	Pauchis	$40
+7/18/2026	sábado	Jose	Cuna de sabores	$40
+7/18/2026	sábado	Jose	Búfalo Alitas Y Chelas	$50
+7/18/2026	sábado	Jose	Calle 7	$45
+7/18/2026	sábado	Jose	Capullos	$40
+7/17/2026	viernes	Jose	Búfalo Alitas Y Chelas	$45
+7/17/2026	viernes	Jose	Pauchis	$40
+7/17/2026	viernes	Jose	Cliente (Centro)	$35
+7/16/2026	jueves	Jose	Calle 7	$45
+7/16/2026	jueves	Jose	Cliente (Centro)	$45
+7/16/2026	jueves	Jose	Cliente (Centro)	$30
+7/15/2026	miércoles	Jose	Cliente (Centro)	$80
+7/15/2026	miércoles	Jose	Cliente (Centro)	$35
+7/15/2026	miércoles	Jose	Cliente (Centro)	$35
+7/15/2026	miércoles	Jose	Pauchis	$45
+7/15/2026	miércoles	Jose	Chicken Krunch	$45
+7/15/2026	miércoles	Jose	Cliente (Centro)	$40
+7/15/2026	miércoles	Jose	Cliente (Centro)	$35
+7/15/2026	miércoles	Jose	Cliente (Centro)	$45
+7/15/2026	miércoles	Jose	Cliente (Centro)	$50
+7/15/2026	miércoles	Jose	Cliente (Centro)	$45
+7/15/2026	miércoles	Jose	Cliente (Centro)	$50
+7/14/2026	martes	Jose	Sebas	$65
+7/14/2026	martes	Jose	Calle 7	$50
+7/14/2026	martes	Jose	Calle 7	$45
+7/13/2026	lunes	Jose	Calle 7	$45
+7/13/2026	lunes	Jose	Pauchis	$45
+7/13/2026	lunes	Jose	Pauchis	$50
+7/13/2026	lunes	Jose	Cliente (Centro)	$40
+7/13/2026	lunes	Jose	Cliente (Centro)	$45
+7/13/2026	lunes	Jose	Cliente (Centro)	$35
+7/13/2026	lunes	Jose	Cliente (Centro)	$35
+7/13/2026	lunes	Jose	Cliente (Centro)	$50
+7/12/2026	domingo	Jose	Cliente (Centro)	$60
+7/12/2026	domingo	Jose	Texa pizza	$45
+7/12/2026	domingo	Jose	Calle 7	$45
+7/12/2026	domingo	Jose	El caldito	$35
+7/11/2026	sábado	Jose	Cliente (Centro)	$40
+7/11/2026	sábado	Jose	Chicken Krunch	$45
+7/11/2026	sábado	Jose	Cliente (Centro)	$35
+7/11/2026	sábado	Jose	Cliente (Centro)	$35
+7/11/2026	sábado	Jose	Patron Alaye	$35
+7/11/2026	sábado	Jose	418 335 3222	$45
+7/11/2026	sábado	Jose	Barbosa Sandoval	$40
+7/10/2026	viernes	Jose	Calle 7	$40
+7/10/2026	viernes	Jose	Patron Alaye	$65
+7/10/2026	viernes	Jose	Calle 7	$45
+7/10/2026	viernes	Jose	Cliente (Centro)	$45
+7/10/2026	viernes	Jose	Cliente (Centro)	$40
+7/10/2026	viernes	Jose	Jhoanna Carreon	$45
+7/10/2026	viernes	Jose	Cliente (Centro)	$45
+7/10/2026	viernes	Jose	Cuna de sabores	$40
+7/10/2026	viernes	Jose	Cliente (Centro)	$45
+7/9/2026	jueves	Jose	Alas de a Litro	$50
+7/9/2026	jueves	Jose	Alitas del jefe	$40
+7/9/2026	jueves	Jose	4181102176	$55
+7/9/2026	jueves	Jose	Cliente (Centro)	$45
+7/9/2026	jueves	Jose	Cliente (Centro)	$45
+7/9/2026	jueves	Jose	Calle 7	$40
+7/9/2026	jueves	Jose	Cliente (Centro)	$40
+7/9/2026	jueves	Diego Gómez	Patron Alaye	$30
+7/9/2026	jueves	Jose	Cliente (Centro)	$50
+7/9/2026	jueves	Diego Gómez	Cliente (Centro)	$35
+7/9/2026	jueves	Diego Gómez	412 177 2184	$40
+7/8/2026	miércoles	Jose	Mariela GE	$45
+7/8/2026	miércoles	Jose	Calle 7	$40
+7/8/2026	miércoles	Jose	Cliente (Centro)	$50
+7/7/2026	martes	Jose	Cliente (Centro)	$50
+7/7/2026	martes	Jose	Pauchis	$40
+7/7/2026	martes	Jose	Pauchis	$40
+7/7/2026	martes	Jose	Cliente (Centro)	$35
+7/7/2026	martes	Jose	Chicken Krunch	$45
+7/7/2026	martes	Jose	Texa pizza	$50
+7/4/2026	sábado	Jose	Barbosa Sandoval	$40
+7/4/2026	sábado	Jose	Barbosa Sandoval	$40
+7/4/2026	sábado	Jose	El caldito	$40
+7/4/2026	sábado	Jose	Barbosa Sandoval	$50
+7/4/2026	sábado	Jose	El caldito	$30
+7/4/2026	sábado	Jose	Brama asador	$35
+7/4/2026	sábado	Jose	Barbosa Sandoval	$50
+7/4/2026	sábado	Jose	Pauchis	$50
+7/4/2026	sábado	Jose	Pauchis	$45
+7/4/2026	sábado	Jose	Brasa Burguer	$60
+7/3/2026	viernes	Jose	El caldito	$30
+7/3/2026	viernes	Jose	Calle 7	$45
+7/3/2026	viernes	Jose	Calle 7	$40
+7/3/2026	viernes	Jose	David Mendez	$50
+7/3/2026	viernes	Jose	Hamburguesas Armando	$55
+7/3/2026	viernes	Jose	David Mendez	$40
+7/3/2026	viernes	Jose	Mi General Swings	$50
+7/3/2026	viernes	Jose	Mi General Swings	$50
+7/3/2026	viernes	Jose	Mi General Swings	$80
+7/2/2026	jueves	Jose	Cliente (Centro)	$35
+7/2/2026	jueves	Jose	Cliente (Centro)	$40
+7/2/2026	jueves	Jose	El caldito	$30
+7/2/2026	jueves	Jose	Cliente (Centro)	$35
+7/2/2026	jueves	Jose	El caldito	$30
+7/2/2026	jueves	Jose	Pauchis	$40
+7/2/2026	jueves	Jose	Cliente (Centro)	$50
+7/2/2026	jueves	Jose	Cliente (Centro)	$50
+7/2/2026	jueves	Jose	Cliente (Centro)	$45
+7/2/2026	jueves	Jose	Tacos el patron	$40
+7/2/2026	jueves	Jose	Hamburguesas Armando	$50
+7/1/2026	miércoles	Jose	Cliente (Centro)	$35
+7/1/2026	miércoles	Carlos	Cliente (Centro)	$40
+7/1/2026	miércoles	Carlos	Cliente (Centro)	$35
+7/1/2026	miércoles	Jose	Cliente (Centro)	$40
+7/1/2026	miércoles	Jose	Cliente (Centro)	$35
+7/1/2026	miércoles	Jose	Cliente (Centro)	$50
+7/1/2026	miércoles	Jose	Cliente (Centro)	$45
+7/1/2026	miércoles	Jose	Cliente (Centro)	$45
+7/1/2026	miércoles	Carlos	Cliente (Centro)	$35
+7/1/2026	miércoles	Carlos	Cliente (Centro)	$40
+7/1/2026	miércoles	Jose	Alas de a Litro	$45
+7/1/2026	miércoles	Jose	Cliente (Centro)	$40
+8/23/2026	domingo	Jose	Texa pizza	$45
 8/23/2026	domingo	Jose	Sushi pingüinos	$45
 8/23/2026	domingo	Jose	El caldito	$40
 8/23/2026	domingo	Jose	El caldito	$40
@@ -93,62 +311,14 @@ const DATA_RAW = `8/23/2026	domingo	Jose	Texa pizza	$45
 8/22/2026	sábado	Jose	Alitas D Lu	$55
 8/22/2026	sábado	Jose	El caldito	$50
 8/22/2026	sábado	Jose	Chicken Krunch	$45
-8/22/2026	sábado	Jose	Sushi pingüinos	$45`;
-
-let ventas=[], filtroFecha=null, editIndex=-1;
-function parseData(){
-  let lines=DATA_RAW.trim().split('\n');
-  ventas=lines.map(l=>{
-    let p=l.split('\t'); if(p.length<5) return null;
-    let fechaStr=p[0].trim(), dia=p[1].trim(), repa=p[2].trim(), cliente=p[3].trim(), valor=parseInt(p[4].replace('$',''));
-    if(isNaN(valor)) return null;
-    let parts=fechaStr.split('/'); let m=parseInt(parts[0]), d=parseInt(parts[1]), y=parseInt(parts[2]);
-    let iso=`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
-    return {fecha:fechaStr, iso, dia, repa, cliente, valor, kygo:5, repartidor:valor-5};
-  }).filter(Boolean);
-  ventas.sort((a,b)=> new Date(b.iso)-new Date(a.iso));
-  let stored=JSON.parse(localStorage.getItem('ventasKigo')||'[]');
-  if(stored.length>0) ventas=stored; else localStorage.setItem('ventasKigo', JSON.stringify(ventas));
-}
-function showView(v){
-  document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
-  document.getElementById('view-'+v).classList.add('active');
-  document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));
-  document.getElementById('b-'+v).classList.add('active');
-}
-function auto(){let input=document.getElementById('cliente').value.toLowerCase(); let list=document.getElementById('list'); if(!input){list.style.display='none';return;} let clientes=[...new Set(ventas.map(v=>v.cliente))].filter(c=>c.toLowerCase().includes(input)).slice(0,8); if(!clientes.length){list.style.display='none';return;} list.innerHTML=clientes.map(c=>`<div style="padding:10px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid #f3f4f6" onclick="sel('${c.replace(/'/g,"\\'")}')">${c}</div>`).join(''); list.style.display='block';}
-function sel(c){document.getElementById('cliente').value=c;document.getElementById('list').style.display='none';}
-function guardar(){
-  let fechaInput=document.getElementById('fecha').value; let cliente=document.getElementById('cliente').value.trim(); let valor=parseInt(document.getElementById('valor').value); let repa=document.getElementById('repa').value;
-  if(!cliente||!valor){alert('Completa cliente y valor');return;}
-  let iso=fechaInput||new Date().toISOString().split('T')[0]; let [y,m,d]=iso.split('-'); let fechaStr=`${parseInt(m)}/${parseInt(d)}/${y}`; let diaSem=['domingo','lunes','martes','miércoles','jueves','viernes','sábado'][new Date(iso).getDay()];
-  let obj={fecha:fechaStr, iso, dia:diaSem, repa, cliente, valor, kygo:5, repartidor:valor-5};
-  if(editIndex>=0){ventas[editIndex]=obj; editIndex=-1;} else ventas.unshift(obj);
-  localStorage.setItem('ventasKigo', JSON.stringify(ventas)); cancelar(); render(); showView('historial');
-}
-function cancelar(){document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';document.getElementById('btnT').innerText='Confirmar Venta';document.getElementById('btnMain').classList.remove('editing');document.getElementById('btnC').style.display='none';editIndex=-1;}
-function editar(i){let list=filtered(); let v=list[i]; let idx=ventas.indexOf(v); let vv=ventas[idx]; document.getElementById('cliente').value=vv.cliente;document.getElementById('valor').value=vv.valor;document.getElementById('repa').value=vv.repa;document.getElementById('fecha').value=vv.iso;editIndex=idx;document.getElementById('btnT').innerText='Guardar Cambios';document.getElementById('btnMain').classList.add('editing');document.getElementById('btnC').style.display='block';showView('inicio');}
-function eliminar(i){if(!confirm('¿Eliminar esta venta?'))return; let list=filtered(); let idx=ventas.indexOf(list[i]); ventas.splice(idx,1); localStorage.setItem('ventasKigo', JSON.stringify(ventas)); render();}
-function filtered(){ if(filtroFecha) return ventas.filter(v=>v.iso===filtroFecha); return ventas; }
-function filtrarFecha(){ let val=document.getElementById('filtroFecha').value; filtroFecha=val||null; render(); }
-function limpiarFiltro(){ document.getElementById('filtroFecha').value=''; filtroFecha=null; render(); }
-function render(){
-  let list=filtered();
-  document.getElementById('tbody').innerHTML=list.map((v,i)=>`<tr><td style="font-size:11px">${v.fecha}</td><td><b>${v.cliente}</b><div style="font-size:10px;color:#6b7280">${v.repa}</div></td><td>$${v.valor}</td><td style="color:#dc2626;font-weight:700">$5</td><td style="font-weight:700">$${v.repartidor}</td><td><div class="actions"><button class="icon" onclick="editar(${i})"><i data-lucide="pencil" style="width:14px"></i></button><button class="icon" onclick="eliminar(${i})"><i data-lucide="trash-2" style="width:14px"></i></button></div></td></tr>`).join('');
-  lucide.createIcons();
-  // Si hay filtro por fecha, usa ese día, si no usa hoy para mostrar
-  let diaParaStats = filtroFecha || new Date().toISOString().split('T')[0];
-  let diaList = ventas.filter(v=>v.iso===diaParaStats);
-  let mes = diaParaStats.slice(0,7);
-  let mesList = ventas.filter(v=>v.iso.startsWith(mes));
-  document.getElementById('sCount').innerText=diaList.length;
-  document.getElementById('sBruto').innerText='$'+diaList.reduce((a,b)=>a+b.valor,0);
-  document.getElementById('sRep').innerText='$'+diaList.reduce((a,b)=>a+b.repartidor,0);
-  document.getElementById('sKigo').innerText='$'+diaList.reduce((a,b)=>a+b.kygo,0);
-  document.getElementById('sMesCount').innerText=mesList.length;
-  document.getElementById('sRepMes').innerText='$'+mesList.reduce((a,b)=>a+b.repartidor,0);
-}
-parseData(); render(); lucide.createIcons();
-</script>
-</body>
-</html>
+8/22/2026	sábado	Jose	Sushi pingüinos	$45
+8/22/2026	sábado	Jose	El caldito	$55
+8/22/2026	sábado	Jose	El caldito	$40
+8/22/2026	sábado	Jose	Sushi pingüinos	$85
+8/22/2026	sábado	Jose	Calle 7	$45
+8/22/2026	sábado	Jose	Cliente (Centro)	$40
+8/22/2026	sábado	Jose	Cliente (Centro)	$40
+8/22/2026	sábado	Jose	El caldito	$45
+8/22/2026	sábado	Jose	Cliente (Centro)	$50
+8/22/2026	sábado	Jose	Cliente (Centro)	$45
+8/22/2026	sábado	Jose	El caldito	$45
