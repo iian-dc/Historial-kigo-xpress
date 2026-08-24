@@ -26,7 +26,7 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 #list{position:absolute;top:52px;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.08);display:none;z-index:10;max-height:140px;overflow:auto}#list div{padding:9px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #f3f4f6}
 .badge{font-size:8px;font-weight:700;padding:2px 6px;border-radius:20px;display:inline-block;margin-top:2px}.badge-mandado{background:#fef3c7;color:#92400e}.badge-transporte{background:#dbeafe;color:#1e40af}
 .filtros-tipo{display:flex;gap:6px;margin-bottom:10px}.filtros-tipo button{flex:1;height:38px;border-radius:10px;border:1.5px solid var(--border);background:#fff;font-weight:700;font-size:11px;cursor:pointer}.filtros-tipo button.active{background:var(--black)!important;color:#fff!important;border-color:var(--black)!important}
-.chip{display:inline-flex;align-items:center;gap:6px;background:var(--black);color:#fff;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:600;margin:4px}.chip i{cursor:pointer}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--black);color:#fff;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:600;margin:4px}
 </style>
 </head>
 <body>
@@ -37,7 +37,7 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div class="group"><div class="label-row"><i data-lucide="package"></i><label>Tipo</label></div><div class="wrap"><select id="tipo"><option value="Moto Mandado">Moto Mandado</option><option value="Moto Transporte">Moto Transporte</option></select></div></div>
 <div class="group"><div class="label-row"><i data-lucide="dollar-sign"></i><label>Valor</label></div><div class="wrap"><input type="number" id="valor" placeholder="0"></div></div>
 <div class="group"><div class="label-row"><i data-lucide="user"></i><label>Repartidor</label></div><div class="wrap"><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
-<button class="btn" onclick="guardar()"><i data-lucide="check" style="width:16px"></i><span id="btnT">Confirmar Venta</span></button>
+<button class="btn" onclick="guardar()"><i data-lucide="check" style="width:16px"></i><span id="btnT">Confirmar</span></button>
 <button id="btnC" onclick="cancelar()" style="display:none;width:100%;height:36px;background:none;border:none;font-size:11px;font-weight:600;color:#6b7280;cursor:pointer;margin-top:6px">Cancelar</button>
 </div></div>
 <div id="view-hoy" class="view"><div class="filtros-tipo"><button id="fHoyTodos" class="active" onclick="setFiltroHoy('todos')">Todos</button><button id="fHoyMandado" onclick="setFiltroHoy('Moto Mandado')">Mandados</button><button id="fHoyTransporte" onclick="setFiltroHoy('Moto Transporte')">Transporte</button></div><div class="card" style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;margin-bottom:8px">HOY - <span id="hoyFecha"></span> <span id="hoyTipoLabel"></span></div><div class="stats"><div class="stat"><span>Pedidos</span><strong id="hCount">0</strong></div><div class="stat"><span>Bruto</span><strong id="hBruto">$0</strong></div><div class="stat dark"><span>Repartidor</span><strong id="hRep">$0</strong></div><div class="stat red"><span>KIGO pagado</span><strong id="hKigo">$0</strong></div></div></div><div class="table-wrap"><table><thead><tr><th>Hora</th><th>Cliente</th><th>Tipo</th><th>Bruto</th><th></th></tr></thead><tbody id="tbodyHoy"></tbody></table></div></div>
@@ -52,10 +52,15 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div id="resumenCobros"></div>
 <div class="card" id="cardDetalleCobros" style="display:none;margin-top:10px">
 <div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:8px">Solo pendientes (rojo)</div>
-<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Debe</th></tr></thead><tbody id="tbodyCobros"></tbody></table></div>
-<div style="margin-top:12px"><button class="btn-green" onclick="compartirCobroWhatsApp()">WhatsApp Deuda</button></div>
+<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="tbodyCobros"></tbody></table></div>
+<div style="margin-top:12px"><button class="btn-green" onclick="compartirCobroWhatsApp()"><i data-lucide="message-circle" style="width:18px"></i> Enviar deuda WhatsApp</button></div>
 </div></div>
-<div class="bottom"><button id="b-inicio" class="active" onclick="showView('inicio')">INICIO</button><button id="b-hoy" onclick="showView('hoy')">HOY</button><button id="b-historial" onclick="showView('historial')">HISTORIAL</button><button id="b-cobros" onclick="showView('cobros')">COBROS</button></div>
+<div class="bottom">
+<button id="b-inicio" class="active" onclick="showView('inicio')"><i data-lucide="home" style="width:18px"></i>INICIO</button>
+<button id="b-hoy" onclick="showView('hoy')"><i data-lucide="sun" style="width:18px"></i>HOY</button>
+<button id="b-historial" onclick="showView('historial')"><i data-lucide="history" style="width:18px"></i>HISTORIAL</button>
+<button id="b-cobros" onclick="showView('cobros')"><i data-lucide="wallet" style="width:18px"></i>COBROS</button>
+</div>
 <script>
 let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,filtroHoy='todos',filtroHistTipo='todos',editIndex=-1,fechasCobro=[];
 function fmt(n){return (n||0).toLocaleString('es-CO');}
@@ -95,7 +100,7 @@ if(fechasCobro.length>0){
 }
 document.getElementById('resumenCobros').innerHTML=html;
 document.getElementById('cardDetalleCobros').style.display=lista.length?'block':'none';
-document.getElementById('tbodyCobros').innerHTML=lista.map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo)}</td><td style="color:#dc2626;font-weight:700">$5</td></tr>`).join('');
+document.getElementById('tbodyCobros').innerHTML=lista.map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo)}</td><td style="font-weight:700">$${fmt(v.valor)}</td></tr>`).join('');
 lucide.createIcons();
 }
 function compartirCobroWhatsApp(){
@@ -103,16 +108,17 @@ let repa=document.getElementById('cobroRepa').value;
 if(!fechasCobro.length)return alert('Agrega fechas');
 let lista=ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&(repa==='todos'||v.repa===repa));
 if(!lista.length)return alert('Sin deuda');
-let texto=`*KIGO XPRESS - COBRO*\nRepartidor: *${repa}*\n\n`;
+let texto=`*KIGO XPRESS - COBRO PENDIENTE*\nRepartidor: *${repa}*\n\n`;
 fechasCobro.forEach(f=>{
  let items=ventas.filter(v=>v.iso===f&&!v.pagado&&(repa==='todos'||v.repa===repa));
  if(!items.length)return;
  let mand=items.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length;
  let trans=items.filter(v=>v.tipo==='Moto Transporte').length;
  let bruto=items.reduce((a,b)=>a+b.valor,0);
- texto+=`📅 Fecha ${f}\n${mand} Mandados / ${trans} Transporte = ${items.length} serv\nIngreso $${fmt(bruto)} - Deuda $${fmt(items.length*5)}\n\n`;
+ texto+=`📅 *Fecha ${f}*\n${mand} Moto Mandados / ${trans} Moto Transporte = ${items.length} servicios\nTotal ingresos: $${fmt(bruto)}\n*Deuda:* $${fmt(items.length*5)}\n\n`;
 });
-texto+=`TOTAL DEUDA: $${fmt(lista.length*5)} (${lista.length} x $5)\n\nDetalle:\n`+lista.map(v=>`• ${v.iso} ${v.cliente} ${v.tipo} Debe $5`).join('\n');
+texto+=`🔴 *TOTAL DEUDA: $${fmt(lista.length*5)}* (${lista.length} servicios)\n\n*Detalle servicios:*\n`;
+texto+=lista.map(v=>`• ${v.iso} - ${(v.tipo||'Moto Mandado')} - ${v.cliente} - $${fmt(v.valor)}`).join('\n');
 window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');
 }
 function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;if(filtroHistTipo!=='todos')list=list.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);document.getElementById('tbody').innerHTML=list.map((v,i)=>{let c=v.pagado?'row-pagado':'row-debe';let k=v.pagado?`$${fmt(5)}`:`$0`;return `<tr class="${c}"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo)}</td><td>$${fmt(v.valor)}</td><td>${k}</td><td>$${fmt(v.valor-5)}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i})">${v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i})">✎</button><button class="icon" onclick="eliminar(${i})">🗑</button></div></td></tr>`;}).join('');let tot=list.reduce((a,b)=>a+b.valor,0);document.getElementById('sCount').innerText=fmt(list.length);document.getElementById('sBruto').innerText='$'+fmt(tot);document.getElementById('sRep').innerText='$'+fmt(tot-(list.length*5));document.getElementById('sKigo').innerText='$'+fmt(list.filter(v=>v.pagado).length*5);}
