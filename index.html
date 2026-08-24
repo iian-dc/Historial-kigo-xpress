@@ -34,9 +34,10 @@ td b{font-size:11px}
 td.sub{font-size:9px;color:#6b7280}
 .actions{display:flex;gap:4px;justify-content:flex-end}
 .icon{width:26px;height:26px;border-radius:6px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;cursor:pointer}
-.icon:hover{background:#f9fafb}
 .bottom{position:fixed;bottom:0;left:0;right:0;height:68px;background:var(--white);border-top:1px solid var(--border);display:flex;z-index:20}
 .bottom button{flex:1;background:none;border:none;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:9px;font-weight:700;color:var(--text);cursor:pointer}.bottom button.active{color:var(--black)}
+#list{position:absolute;top:50px;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 20px rgba(0,0,0,.08);display:none;z-index:10;max-height:140px;overflow:auto}
+#list div{padding:9px 12px;cursor:pointer;font-size:12px;border-bottom:1px solid #f3f4f6}#list div:hover{background:#f9fafb}
 </style>
 </head>
 <body>
@@ -45,7 +46,7 @@ td.sub{font-size:9px;color:#6b7280}
 <div id="view-inicio" class="view active">
   <div class="card">
     <div class="group"><label>Fecha del servicio</label><div class="wrap"><i data-lucide="calendar"></i><input type="date" id="fecha"></div></div>
-    <div class="group"><label>Cliente / Comercio</label><div class="wrap"><i data-lucide="store"></i><input type="text" id="cliente" placeholder="Ej. El caldito"></div></div>
+    <div class="group"><label>Cliente / Comercio</label><div class="wrap"><i data-lucide="store"></i><input type="text" id="cliente" placeholder="Ej. El caldito" oninput="auto()" autocomplete="off"><div id="list"></div></div></div>
     <div class="group"><label>Valor del servicio</label><div class="wrap"><i data-lucide="dollar-sign"></i><input type="number" id="valor" placeholder="0"></div></div>
     <div class="group"><label>Repartidor</label><div class="wrap"><i data-lucide="user"></i><select id="repa"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
     <button class="btn" onclick="guardar()"><i data-lucide="check" style="width:16px"></i><span id="btnT">Confirmar Venta</span></button>
@@ -57,9 +58,9 @@ td.sub{font-size:9px;color:#6b7280}
   <div class="date-bar"><i data-lucide="calendar-days" style="width:16px;color:#6b7280"></i><input type="date" id="filtroFecha" onchange="filtrarFecha()"><button onclick="limpiarFiltro()" style="height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer;font-size:11px">Todos</button></div>
   <div class="stats">
     <div class="stat"><span>Pedidos día</span><strong id="sCount">0</strong></div>
-    <div class="stat"><span>Bruto día</span><strong id="sBruto">$0</strong></div>
+    <div class="stat"><span>Bruto día (total)</span><strong id="sBruto">$0</strong></div>
     <div class="stat dark"><span>Repartidor día</span><strong id="sRep">$0</strong></div>
-    <div class="stat red"><span>KIGO día</span><strong id="sKigo">$0</strong></div>
+    <div class="stat red"><span>KIGO día ($5 x servicio)</span><strong id="sKigo">$0</strong></div>
   </div>
   <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Bruto</th><th>KIGO</th><th>Repar.</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div>
 </div>
@@ -72,13 +73,16 @@ td.sub{font-size:9px;color:#6b7280}
 <script>
 let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,editIndex=-1;
 function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));document.getElementById('b-'+v).classList.add('active');}
-function guardar(){let fecha=document.getElementById('fecha').value||new Date().toISOString().split('T')[0];let cliente=document.getElementById('cliente').value.trim();let valor=parseInt(document.getElementById('valor').value);let repa=document.getElementById('repa').value;if(!cliente||!valor)return alert('Completa datos');let obj={iso:fecha,cliente,valor,repa,kygo:5,repartidor:valor-5};if(editIndex>=0){ventas[editIndex]=obj;editIndex=-1;document.getElementById('btnT').innerText='Confirmar Venta';document.getElementById('btnC').style.display='none';}else{ventas.unshift(obj);}localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';render();showView('historial');}
+function auto(){let input=document.getElementById('cliente').value.toLowerCase();let list=document.getElementById('list');if(!input){list.style.display='none';return;}let clientes=[...new Set(ventas.map(v=>v.cliente))].filter(c=>c.toLowerCase().includes(input)).slice(0,8);if(!clientes.length){list.style.display='none';return;}list.innerHTML=clientes.map(c=>`<div onclick="sel('${c.replace(/'/g,"\\'")}')">${c}</div>`).join('');list.style.display='block';}
+function sel(c){document.getElementById('cliente').value=c;document.getElementById('list').style.display='none';}
+document.addEventListener('click',e=>{if(!e.target.closest('.wrap'))document.getElementById('list').style.display='none';});
+function guardar(){let fecha=document.getElementById('fecha').value||new Date().toISOString().split('T')[0];let cliente=document.getElementById('cliente').value.trim();let valor=parseInt(document.getElementById('valor').value);let repa=document.getElementById('repa').value;if(!cliente||!valor)return alert('Completa datos');let obj={iso:fecha,cliente,valor,repa};if(editIndex>=0){ventas[editIndex]=obj;editIndex=-1;document.getElementById('btnT').innerText='Confirmar Venta';document.getElementById('btnC').style.display='none';}else{ventas.unshift(obj);}localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';render();showView('historial');}
 function cancelar(){document.getElementById('cliente').value='';document.getElementById('valor').value='';document.getElementById('fecha').value='';document.getElementById('btnT').innerText='Confirmar Venta';editIndex=-1;document.getElementById('btnC').style.display='none';}
 function editar(i){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);let v=ventas[realIdx];document.getElementById('cliente').value=v.cliente;document.getElementById('valor').value=v.valor;document.getElementById('repa').value=v.repa;document.getElementById('fecha').value=v.iso;editIndex=realIdx;document.getElementById('btnT').innerText='Guardar Cambios';document.getElementById('btnC').style.display='block';showView('inicio');}
-function eliminar(i){if(!confirm('¿Eliminar este registro?'))return;let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);ventas.splice(realIdx,1);localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();}
+function eliminar(i){if(!confirm('¿Eliminar?'))return;let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;let realIdx=ventas.indexOf(list[i]);ventas.splice(realIdx,1);localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();}
 function filtrarFecha(){filtroFecha=document.getElementById('filtroFecha').value||null;render();}
 function limpiarFiltro(){document.getElementById('filtroFecha').value='';filtroFecha=null;render();}
-function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;document.getElementById('tbody').innerHTML=list.map((v,i)=>`<tr><td style="font-size:10px">${v.iso.slice(5)}</td><td><b>${v.cliente}</b><div class="sub">${v.repa}</div></td><td>$${v.valor}</td><td style="color:#dc2626;font-weight:700">$5</td><td style="font-weight:700">$${v.repartidor}</td><td><div class="actions"><button class="icon" onclick="editar(${i})" title="Editar"><i data-lucide="pencil" style="width:12px;height:12px"></i></button><button class="icon" onclick="eliminar(${i})" title="Eliminar"><i data-lucide="trash-2" style="width:12px;height:12px"></i></button></div></td></tr>`).join('');lucide.createIcons();let dia=filtroFecha||new Date().toISOString().split('T')[0];let dList=ventas.filter(v=>v.iso===dia);document.getElementById('sCount').innerText=dList.length;document.getElementById('sBruto').innerText='$'+dList.reduce((a,b)=>a+b.valor,0);document.getElementById('sRep').innerText='$'+dList.reduce((a,b)=>a+b.repartidor,0);document.getElementById('sKigo').innerText='$'+dList.reduce((a,b)=>a+b.kygo,0);}
+function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;document.getElementById('tbody').innerHTML=list.map((v,i)=>`<tr><td style="font-size:10px">${v.iso.slice(5)}</td><td><b>${v.cliente}</b><div style="font-size:9px;color:#6b7280">${v.repa}</div></td><td>$${v.valor}</td><td style="color:#dc2626;font-weight:700">$5</td><td style="font-weight:700">$${v.valor-5}</td><td><div class="actions"><button class="icon" onclick="editar(${i})"><i data-lucide="pencil" style="width:12px"></i></button><button class="icon" onclick="eliminar(${i})"><i data-lucide="trash-2" style="width:12px"></i></button></div></td></tr>`).join('');lucide.createIcons();let dia=filtroFecha||new Date().toISOString().split('T')[0];let dList=ventas.filter(v=>v.iso===dia);let total=dList.reduce((a,b)=>a+b.valor,0);let kigo=dList.length*5;let repar=total-kigo;document.getElementById('sCount').innerText=dList.length;document.getElementById('sBruto').innerText='$'+total;document.getElementById('sRep').innerText='$'+repar;document.getElementById('sKigo').innerText='$'+kigo;}
 render();lucide.createIcons();
 </script>
 </body>
