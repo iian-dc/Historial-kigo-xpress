@@ -81,11 +81,20 @@ let promosNuevas=[
 {iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+7}
 ];
 let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,filtroHoy='todos',filtroHistTipo='todos',editIndex=-1,fechasCobro=[],esPromo=false;
-if(!localStorage.getItem('promosFinal15_ord')){
-  ventas=[...ventas,...promosNuevas];
+
+// LIMPIEZA TOTAL DE PROMOS ANTIGUAS PARA EVITAR DUPLICADOS
+ventas = ventas.filter(v=>!v.promo);
+localStorage.removeItem('promosJulioCargadas');
+localStorage.removeItem('promosJulioCargadasV2');
+localStorage.removeItem('promosFinal15');
+localStorage.removeItem('promosFinal15_ord');
+
+// CARGAMOS EXACTAMENTE LAS 15 QUE ME DISTE
+if(!localStorage.getItem('promos15_final')){
+  ventas = [...ventas,...promosNuevas];
   ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));
   localStorage.setItem('ventasKigo',JSON.stringify(ventas));
-  localStorage.setItem('promosFinal15_ord','1');
+  localStorage.setItem('promos15_final','1');
 } else {
   ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));
 }
