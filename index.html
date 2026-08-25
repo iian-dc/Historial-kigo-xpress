@@ -41,29 +41,12 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <button class="btn" onclick="guardar()"><i data-lucide="check" style="width:16px"></i><span id="btnT">Confirmar</span></button>
 <button id="btnC" onclick="cancelar()" style="display:none;width:100%;height:36px;background:none;border:none;font-size:11px;font-weight:600;color:#6b7280;cursor:pointer;margin-top:6px">Cancelar</button>
 </div></div>
-<div id="view-hoy" class="view"><div class="filtros-tipo"><button id="fHoyTodos" class="active" onclick="setFiltroHoy('todos')">Todos</button><button id="fHoyMandado" onclick="setFiltroHoy('Moto Mandado')">Mandados</button><button id="fHoyTransporte" onclick="setFiltroHoy('Moto Transporte')">Transporte</button></div><div class="card" style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;margin-bottom:8px">HOY - <span id="hoyFecha"></span> <span id="hoyTipoLabel"></span></div><div class="stats"><div class="stat"><span>Pedidos</span><strong id="hCount">0</strong></div><div class="stat"><span>Bruto</span><strong id="hBruto">$0</strong></div><div class="stat dark"><span>Repartidor</span><strong id="hRep">$0</strong></div><div class="stat red"><span>KIGO pagado</span><strong id="hKigo">$0</strong></div></div></div><div class="table-wrap"><table><thead><tr><th>Hora</th><th>Cliente</th><th>Tipo</th><th>Bruto</th><th></th></tr></thead><tbody id="tbodyHoy"></tbody></table></div></div>
+<div id="view-hoy" class="view"><div class="filtros-tipo"><button id="fHoyTodos" class="active" onclick="setFiltroHoy('todos')">Todos</button><button id="fHoyMandado" onclick="setFiltroHoy('Moto Mandado')">Mandados</button><button id="fHoyTransporte" onclick="setFiltroHoy('Moto Transporte')">Transporte</button></div><div class="card" style="margin-bottom:10px"><div style="font-size:11px;font-weight:700;margin-bottom:8px">HOY - <span id="hoyFecha"></span></div><div class="stats"><div class="stat"><span>Pedidos</span><strong id="hCount">0</strong></div><div class="stat"><span>Bruto</span><strong id="hBruto">$0</strong></div><div class="stat dark"><span>Repartidor</span><strong id="hRep">$0</strong></div><div class="stat red"><span>KIGO pagado</span><strong id="hKigo">$0</strong></div></div></div><div class="table-wrap"><table><thead><tr><th>Hora</th><th>Cliente</th><th>Tipo</th><th>Bruto</th><th></th></tr></thead><tbody id="tbodyHoy"></tbody></table></div></div>
 <div id="view-historial" class="view"><div class="filtros-tipo"><button id="fHistTodos" class="active" onclick="setFiltroHistTipo('todos')">Todos</button><button id="fHistMandado" onclick="setFiltroHistTipo('Moto Mandado')">Mandados</button><button id="fHistTransporte" onclick="setFiltroHistTipo('Moto Transporte')">Transporte</button></div><div class="date-bar"><input type="date" id="filtroFecha" onchange="filtrarFecha()"><button onclick="limpiarFiltro()" style="height:36px;padding:0 10px;border-radius:8px;border:1px solid var(--border);background:#fff;font-weight:700;cursor:pointer;font-size:11px">Todos</button></div><div class="stats"><div class="stat"><span>Pedidos</span><strong id="sCount">0</strong></div><div class="stat"><span>Bruto</span><strong id="sBruto">$0</strong></div><div class="stat dark"><span>Repar.</span><strong id="sRep">$0</strong></div><div class="stat red"><span>KIGO</span><strong id="sKigo">$0</strong></div></div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Bruto</th><th>KIGO</th><th>Repar.</th><th></th></tr></thead><tbody id="tbody"></tbody></table></div></div>
-<div id="view-cobros" class="view"><div class="card" style="margin-bottom:10px">
-<div style="font-weight:800;font-size:14px;margin-bottom:10px">COBROS - DEUDAS</div>
-<div class="group"><div class="label-row"><label>Repartidor</label></div><div class="wrap"><select id="cobroRepa" onchange="renderCobros()"><option value="todos">Todos</option><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
-<div class="group"><div class="label-row"><label>Agregar fechas</label></div><div style="display:flex;gap:6px"><div class="wrap" style="flex:1"><input type="date" id="cobroFecha"></div><button onclick="addFechaCobro()" style="height:48px;padding:0 16px;background:var(--black);color:#fff;border:none;border-radius:12px;font-weight:700;cursor:pointer">+</button></div></div>
-<div id="chipsFechas" style="margin-top:8px"></div>
-<div style="display:flex;gap:6px;margin-top:10px"><button onclick="limpiarFechasCobro()" style="flex:1;height:32px;border:1px solid var(--border);background:#fff;border-radius:8px;font-size:11px;font-weight:600">Limpiar</button><button onclick="addHoyAyer()" style="flex:1;height:32px;border:1px solid var(--border);background:#fff;border-radius:8px;font-size:11px;font-weight:600">Hoy+Ayer</button></div>
-</div>
-<div id="resumenCobros"></div>
-<div class="card" id="cardDetalleCobros" style="display:none;margin-top:10px">
-<div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:8px">Solo pendientes (rojo)</div>
-<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="tbodyCobros"></tbody></table></div>
-<div style="margin-top:12px"><button class="btn-green" onclick="compartirCobroWhatsApp()"><i data-lucide="message-circle" style="width:18px"></i> Enviar deuda WhatsApp</button></div>
-</div></div>
-<div class="bottom">
-<button id="b-inicio" class="active" onclick="showView('inicio')"><i data-lucide="home" style="width:18px"></i>INICIO</button>
-<button id="b-hoy" onclick="showView('hoy')"><i data-lucide="sun" style="width:18px"></i>HOY</button>
-<button id="b-historial" onclick="showView('historial')"><i data-lucide="history" style="width:18px"></i>HISTORIAL</button>
-<button id="b-cobros" onclick="showView('cobros')"><i data-lucide="wallet" style="width:18px"></i>COBROS</button>
-</div>
+<div id="view-cobros" class="view"><div class="card" style="margin-bottom:10px"><div style="font-weight:800;font-size:14px;margin-bottom:10px">COBROS - DEUDAS</div><div class="group"><div class="label-row"><label>Repartidor</label></div><div class="wrap"><select id="cobroRepa" onchange="renderCobros()"><option value="todos">Todos</option><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div><div class="group"><div class="label-row"><label>Agregar fechas</label></div><div style="display:flex;gap:6px"><div class="wrap" style="flex:1"><input type="date" id="cobroFecha"></div><button onclick="addFechaCobro()" style="height:48px;padding:0 16px;background:var(--black);color:#fff;border:none;border-radius:12px;font-weight:700;cursor:pointer">+</button></div></div><div id="chipsFechas" style="margin-top:8px"></div><div style="display:flex;gap:6px;margin-top:10px"><button onclick="limpiarFechasCobro()" style="flex:1;height:32px;border:1px solid var(--border);background:#fff;border-radius:8px;font-size:11px;font-weight:600">Limpiar</button><button onclick="addHoyAyer()" style="flex:1;height:32px;border:1px solid var(--border);background:#fff;border-radius:8px;font-size:11px;font-weight:600">Hoy+Ayer</button></div></div><div id="resumenCobros"></div><div class="card" id="cardDetalleCobros" style="display:none;margin-top:10px"><div style="font-size:11px;font-weight:700;color:#6b7280;margin-bottom:8px">Solo pendientes (rojo)</div><div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Valor</th></tr></thead><tbody id="tbodyCobros"></tbody></table></div><div style="margin-top:12px"><button class="btn-green" onclick="compartirCobroWhatsApp()"><i data-lucide="message-circle" style="width:18px"></i> Enviar deuda WhatsApp</button></div></div></div>
+<div class="bottom"><button id="b-inicio" class="active" onclick="showView('inicio')"><i data-lucide="home" style="width:18px"></i>INICIO</button><button id="b-hoy" onclick="showView('hoy')"><i data-lucide="sun" style="width:18px"></i>HOY</button><button id="b-historial" onclick="showView('historial')"><i data-lucide="history" style="width:18px"></i>HISTORIAL</button><button id="b-cobros" onclick="showView('cobros')"><i data-lucide="wallet" style="width:18px"></i>COBROS</button></div>
 <script>
-let promosNuevas=[
+let promos15=[
 {iso:'2026-08-10',cliente:'Calle 7',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-08-10').getTime()+1},
 {iso:'2026-08-10',cliente:'Calle 7',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-08-10').getTime()+2},
 {iso:'2026-07-14',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-14').getTime()+1},
@@ -81,23 +64,12 @@ let promosNuevas=[
 {iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+7}
 ];
 let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,filtroHoy='todos',filtroHistTipo='todos',editIndex=-1,fechasCobro=[],esPromo=false;
-
-// LIMPIEZA TOTAL DE PROMOS ANTIGUAS PARA EVITAR DUPLICADOS
-ventas = ventas.filter(v=>!v.promo);
-localStorage.removeItem('promosJulioCargadas');
-localStorage.removeItem('promosJulioCargadasV2');
-localStorage.removeItem('promosFinal15');
-localStorage.removeItem('promosFinal15_ord');
-
-// CARGAMOS EXACTAMENTE LAS 15 QUE ME DISTE
-if(!localStorage.getItem('promos15_final')){
-  ventas = [...ventas,...promosNuevas];
-  ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));
-  localStorage.setItem('ventasKigo',JSON.stringify(ventas));
-  localStorage.setItem('promos15_final','1');
-} else {
-  ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));
-}
+// Limpia duplicados viejos y deja solo estas 15
+ventas=ventas.filter(v=>!v.promo);
+localStorage.removeItem('promosJulioCargadas');localStorage.removeItem('promosJulioCargadasV2');localStorage.removeItem('promosFinal15');localStorage.removeItem('promosFinal15_ord');localStorage.removeItem('promos15_final');
+ventas=[...ventas,...promos15];
+ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));
+localStorage.setItem('ventasKigo',JSON.stringify(ventas));
 function fmt(n){return (n||0).toLocaleString('es-CO');}
 function todayISO(){return new Date().toISOString().split('T')[0];}
 function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));document.getElementById('b-'+v).classList.add('active');if(v==='hoy')renderHoy();if(v==='historial')render();if(v==='cobros')renderCobros();}
@@ -118,45 +90,8 @@ function addFechaCobro(){let f=document.getElementById('cobroFecha').value;if(!f
 function limpiarFechasCobro(){fechasCobro=[];renderCobros();}
 function addHoyAyer(){let h=new Date();let a=new Date();a.setDate(h.getDate()-1);let ih=h.toISOString().split('T')[0];let ia=a.toISOString().split('T')[0];if(!fechasCobro.includes(ih))fechasCobro.push(ih);if(!fechasCobro.includes(ia))fechasCobro.push(ia);renderCobros();}
 function removeFecha(f){fechasCobro=fechasCobro.filter(x=>x!==f);renderCobros();}
-function renderCobros(){
-let repa=document.getElementById('cobroRepa').value;
-document.getElementById('chipsFechas').innerHTML=fechasCobro.length?fechasCobro.map(f=>`<span class="chip">${f} <span onclick="removeFecha('${f}')">x</span></span>`).join(''):'<span style="font-size:11px;color:#6b7280">Sin fechas</span>';
-let lista=fechasCobro.length?ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa)):[];
-let html='';
-if(fechasCobro.length>0){
- html+=`<div class="card" style="margin-bottom:10px">`;
- fechasCobro.forEach(f=>{
-  let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));
-  let total=items.reduce((a,b)=>a+b.valor,0);
-  let mand=items.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length;
-  let trans=items.filter(v=>v.tipo==='Moto Transporte').length;
-  html+=`<div style="padding:8px 0;border-bottom:1px solid #f3f4f6"><b>${f}</b> - ${items.length} serv (${mand} M, ${trans} T)<br><small>Bruto $${fmt(total)} - Deuda $${fmt(items.length*5)}</small></div>`;
- });
- html+=`<div style="padding-top:10px;display:flex;justify-content:space-between"><b>TOTAL DEUDA</b><b style="color:#dc2626">$${fmt(lista.length*5)}</b></div></div>`;
-}
-document.getElementById('resumenCobros').innerHTML=html;
-document.getElementById('cardDetalleCobros').style.display=lista.length?'block':'none';
-document.getElementById('tbodyCobros').innerHTML=lista.map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td style="font-weight:700">$${fmt(v.valor)}</td></tr>`).join('');
-lucide.createIcons();
-}
-function compartirCobroWhatsApp(){
-let repa=document.getElementById('cobroRepa').value;
-if(!fechasCobro.length)return alert('Agrega fechas');
-let lista=ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));
-if(!lista.length)return alert('Sin deuda');
-let texto=`*KIGO XPRESS - COBRO PENDIENTE*\nRepartidor: *${repa}*\n\n`;
-fechasCobro.forEach(f=>{
- let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));
- if(!items.length)return;
- let mand=items.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length;
- let trans=items.filter(v=>v.tipo==='Moto Transporte').length;
- let bruto=items.reduce((a,b)=>a+b.valor,0);
- texto+=`📅 *Fecha ${f}*\n${mand} Moto Mandados / ${trans} Moto Transporte = ${items.length} servicios\nTotal ingresos: $${fmt(bruto)}\n*Deuda:* $${fmt(items.length*5)}\n\n`;
-});
-texto+=`🔴 *TOTAL DEUDA: $${fmt(lista.length*5)}* (${lista.length} servicios)\n\n*Detalle servicios:*\n`;
-texto+=lista.map(v=>`• ${v.iso} - ${(v.tipo||'Moto Mandado')} - ${v.cliente} - $${fmt(v.valor)}`).join('\n');
-window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');
-}
+function renderCobros(){let repa=document.getElementById('cobroRepa').value;document.getElementById('chipsFechas').innerHTML=fechasCobro.length?fechasCobro.map(f=>`<span class="chip">${f} <span onclick="removeFecha('${f}')">x</span></span>`).join(''):'<span style="font-size:11px;color:#6b7280">Sin fechas</span>';let lista=fechasCobro.length?ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa)):[];let html='';if(fechasCobro.length>0){html+=`<div class="card" style="margin-bottom:10px">`;fechasCobro.forEach(f=>{let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));let total=items.reduce((a,b)=>a+b.valor,0);html+=`<div style="padding:8px 0;border-bottom:1px solid #f3f4f6"><b>${f}</b> - ${items.length} serv<br><small>Bruto $${fmt(total)} - Deuda $${fmt(items.length*5)}</small></div>`;});html+=`<div style="padding-top:10px;display:flex;justify-content:space-between"><b>TOTAL DEUDA</b><b style="color:#dc2626">$${fmt(lista.length*5)}</b></div></div>`;}document.getElementById('resumenCobros').innerHTML=html;document.getElementById('cardDetalleCobros').style.display=lista.length?'block':'none';document.getElementById('tbodyCobros').innerHTML=lista.map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td style="font-weight:700">$${fmt(v.valor)}</td></tr>`).join('');lucide.createIcons();}
+function compartirCobroWhatsApp(){let repa=document.getElementById('cobroRepa').value;if(!fechasCobro.length)return alert('Agrega fechas');let lista=ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));if(!lista.length)return alert('Sin deuda');let texto=`*KIGO XPRESS - COBRO PENDIENTE*\nRepartidor: *${repa}*\n\n`;fechasCobro.forEach(f=>{let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));if(!items.length)return;let bruto=items.reduce((a,b)=>a+b.valor,0);texto+=`📅 *Fecha ${f}* - ${items.length} servicios - Bruto $${fmt(bruto)} - Deuda $${fmt(items.length*5)}\n\n`;});texto+=`🔴 *TOTAL DEUDA: $${fmt(lista.length*5)}*\n`;window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');}
 function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;if(filtroHistTipo!=='todos')list=list.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);document.getElementById('tbody').innerHTML=list.map((v,i)=>{let c=v.promo?'row-promo':v.pagado?'row-pagado':'row-debe';let k=v.promo?'PROMO':v.pagado?`$${fmt(5)}`:`$0`;let val=v.promo?'PROMOCION':`$${fmt(v.valor)}`;return `<tr class="${c}"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td>${val}</td><td>${k}</td><td>${v.promo?'$0':'$'+fmt(v.valor-5)}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i})">${v.promo?'🎁':v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i})">✎</button><button class="icon" onclick="eliminar(${i})">🗑</button></div></td></tr>`;}).join('');let tot=list.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);document.getElementById('sCount').innerText=fmt(list.length);document.getElementById('sBruto').innerText='$'+fmt(tot);document.getElementById('sRep').innerText='$'+fmt(tot-(list.filter(v=>!v.promo).length*5));document.getElementById('sKigo').innerText='$'+fmt(list.filter(v=>v.pagado&&!v.promo).length*5);}
 function renderHoy(){let iso=todayISO();document.getElementById('hoyFecha').innerText=iso;let hoy=ventas.filter(v=>v.iso===iso);if(filtroHoy!=='todos')hoy=hoy.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);let tot=hoy.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);document.getElementById('hCount').innerText=fmt(hoy.length);document.getElementById('hBruto').innerText='$'+fmt(tot);document.getElementById('hKigo').innerText='$'+fmt(hoy.filter(v=>v.pagado&&!v.promo).length*5);document.getElementById('hRep').innerText='$'+fmt(tot-(hoy.filter(v=>!v.promo).length*5));document.getElementById('tbodyHoy').innerHTML=hoy.map((v,i)=>{let c=v.promo?'row-promo':v.pagado?'row-pagado':'row-debe';let val=v.promo?'PROMOCION':`$${fmt(v.valor)}`;return `<tr class="${c}"><td>${new Date(v.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td>${val}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i},'hoy')">${v.promo?'🎁':v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i},'hoy')">✎</button><button class="icon" onclick="eliminar(${i},'hoy')">🗑</button></div></td></tr>`;}).join('');}
 render();renderHoy();renderCobros();lucide.createIcons();
