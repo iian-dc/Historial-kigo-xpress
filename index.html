@@ -76,6 +76,7 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div id="resumenHistMes"></div>
 <div class="card" id="cardHistDetalle" style="display:none;margin-top:10px">
 <div class="table-wrap"><table><thead><tr><th>Día</th><th>Mandados</th><th>Transporte</th><th>Total</th><th>Deuda KIGO</th></tr></thead><tbody id="tbodyHistMes"></tbody></table></div>
+<div style="margin-top:12px"><button class="btn-green" onclick="compartirHistWhatsApp()"><i data-lucide="message-circle" style="width:18px"></i> Enviar cobro historial WhatsApp</button></div>
 </div>
 </div>
 
@@ -151,6 +152,30 @@ document.getElementById('tbodyHistMes').innerHTML=dias.map(d=>{
 lucide.createIcons();
 }
 function compartirCobroWhatsApp(){let repa=document.getElementById('cobroRepa').value;if(!fechasCobro.length)return alert('Agrega fechas');let lista=ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));if(!lista.length)return alert('Sin deuda');let texto=`*KIGO XPRESS - COBRO PENDIENTE*\nRepartidor: *${repa}*\n\n`;fechasCobro.forEach(f=>{let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));if(!items.length)return;let mand=items.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length;let trans=items.filter(v=>v.tipo==='Moto Transporte').length;let deuda=mand*5+trans*10;let bruto=items.reduce((a,b)=>a+b.valor,0);texto+=`📅 *Fecha ${f}* - ${mand} Mand ($${fmt(mand*5)}) / ${trans} Trans ($${fmt(trans*10)}) = ${items.length} serv\nBruto $${fmt(bruto)} - Deuda KIGO $${fmt(deuda)}\n\n`;});texto+=`🔴 *TOTAL DEUDA KIGO: $${fmt(deudaItems(lista))}*\n`;window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');}
+
+function compartirHistWhatsApp(){
+let mes=document.getElementById('mesHist').value;
+let repa=document.getElementById('histRepa').value;
+if(!mes)return alert('Selecciona un mes');
+let filtradas=ventas.filter(v=>v.iso.startsWith(mes)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));
+if(!filtradas.length)return alert('Sin deuda en ese mes');
+let porDia={};
+filtradas.forEach(v=>{if(!porDia[v.iso])porDia[v.iso]=[];porDia[v.iso].push(v);});
+let dias=Object.keys(porDia).sort();
+let totalMand=0,totalTrans=0,totalDeuda=0;
+dias.forEach(d=>{let m=porDia[d].filter(x=>(x.tipo||'Moto Mandado')==='Moto Mandado').length; let t=porDia[d].filter(x=>x.tipo==='Moto Transporte').length; totalMand+=m; totalTrans+=t; totalDeuda+=(m*5+t*10);});
+let texto=`*KIGO XPRESS - HISTORIAL DE DEUDAS*\nMes: *${mes}*\nRepartidor: *${repa}*\n\n`;
+dias.forEach(d=>{
+ let mand=porDia[d].filter(x=>(x.tipo||'Moto Mandado')==='Moto Mandado').length;
+ let trans=porDia[d].filter(x=>x.tipo==='Moto Transporte').length;
+ let deuda=mand*5+trans*10;
+ let tot=mand+trans;
+ texto+=`📅 ${d} - Mandados: ${mand} ($${mand*5}) / Transporte: ${trans} ($${trans*10}) / Total: ${tot} serv / Deuda: $${deuda}\n`;
+});
+texto+=`\n🔴 *RESUMEN ${mes}*\nMandados: ${totalMand} ($${totalMand*5}) - Transporte: ${totalTrans} ($${totalTrans*10})\nTotal servicios: ${totalMand+totalTrans}\n*TOTAL DEUDA KIGO: $${totalDeuda}*`;
+window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');
+}
+
 function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;if(filtroHistTipo!=='todos')list=list.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);document.getElementById('tbody').innerHTML=list.map((v,i)=>{let c=v.promo?'row-promo':v.pagado?'row-pagado':'row-debe';let fee=kigoFee(v.tipo||'Moto Mandado');let k=v.promo?'PROMO':v.pagado?`$${fmt(fee)}`:`$0`;let val=v.promo?'PROMOCION':`$${fmt(v.valor)}`;let repVal=v.promo?'$0':'$'+fmt(v.valor-fee);return `<tr class="${c}"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td>${val}</td><td>${k}</td><td>${repVal}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i})">${v.promo?'🎁':v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i})">✎</button><button class="icon" onclick="eliminar(${i})">🗑</button></div></td></tr>`;}).join('');let tot=list.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);let kigoPagado=list.filter(v=>v.pagado&&!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);let kigoTotal=list.filter(v=>!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);document.getElementById('sCount').innerText=fmt(list.length);document.getElementById('sBruto').innerText='$'+fmt(tot);document.getElementById('sRep').innerText='$'+fmt(tot-kigoTotal);document.getElementById('sKigo').innerText='$'+fmt(kigoPagado);}
 function renderHoy(){let iso=todayISO();document.getElementById('hoyFecha').innerText=iso;let hoy=ventas.filter(v=>v.iso===iso);if(filtroHoy!=='todos')hoy=hoy.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);let tot=hoy.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);let kigoPagado=hoy.filter(v=>v.pagado&&!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);let kigoTotal=hoy.filter(v=>!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);document.getElementById('hCount').innerText=fmt(hoy.length);document.getElementById('hBruto').innerText='$'+fmt(tot);document.getElementById('hKigo').innerText='$'+fmt(kigoPagado);document.getElementById('hRep').innerText='$'+fmt(tot-kigoTotal);document.getElementById('tbodyHoy').innerHTML=hoy.map((v,i)=>{let c=v.promo?'row-promo':v.pagado?'row-pagado':'row-debe';let val=v.promo?'PROMOCION':`$${fmt(v.valor)}`;return `<tr class="${c}"><td>${new Date(v.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td>${val}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i},'hoy')">${v.promo?'🎁':v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i},'hoy')">✎</button><button class="icon" onclick="eliminar(${i},'hoy')">🗑</button></div></td></tr>`;}).join('');}
 render();renderHoy();renderCobros();renderHistMes();lucide.createIcons();
