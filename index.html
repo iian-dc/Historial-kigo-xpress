@@ -77,8 +77,8 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div style="margin-top:12px"><button class="btn-green" onclick="compartirHistWhatsApp()"><i data-lucide="message-circle" style="width:18px"></i> Enviar cobro historial WhatsApp</button></div>
 </div>
 </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <div id="view-clientes" class="view">
+</div>
+<div id="view-clientes" class="view">
 <div style="display:flex;gap:8px;margin-bottom:10px">
 <button id="tabCliList" class="tab-cobro active" onclick="showTabClientes('lista')">Listado Clientes</button>
 <button id="tabCliRank" class="tab-cobro" onclick="showTabClientes('ranking')">Ranking</button>
@@ -105,13 +105,11 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 </div>
 </div>
 </div>
-
 <div id="view-estadisticas" class="view">
 <div style="display:flex;gap:8px;margin-bottom:10px">
 <button id="tabEstMes" class="tab-cobro active" onclick="showTabEst('mes')">Estadísticas por Mes</button>
 <button id="tabEstCal" class="tab-cobro" onclick="showTabEst('cal')">Calendario Mes Actual</button>
 </div>
-
 <div id="panelEstMes">
 <div class="card" style="margin-bottom:10px">
 <div style="font-weight:800;font-size:14px;margin-bottom:10px">CONTROL TOTAL POR MES</div>
@@ -122,7 +120,6 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div class="table-wrap"><table><thead><tr><th>Tipo</th><th>Cantidad</th><th>Bruto</th></tr></thead><tbody id="tbodyEstMes"></tbody></table></div>
 </div>
 </div>
-
 <div id="panelEstCal" style="display:none">
 <div class="card" style="margin-bottom:10px">
 <div style="display:flex;justify-content:space-between;align-items:center">
@@ -136,7 +133,27 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div class="cal-grid" id="gridCal" style="margin-top:6px"></div>
 </div>
 </div>
-
+</div>
+<div id="view-repartidor" class="view">
+<div class="card" style="margin-bottom:10px">
+<div style="font-weight:800;font-size:14px;margin-bottom:10px">PANEL REPARTIDOR</div>
+<div class="group"><div class="label-row"><label>Selecciona repartidor</label></div><div class="wrap"><select id="repView" onchange="renderRepartidor()"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
+<div style="display:flex;gap:6px">
+<button onclick="setFiltroRep('todos')" id="fRepTodos" class="tab-cobro active">Todos</button>
+<button onclick="setFiltroRep('Moto Mandado')" id="fRepMand" class="tab-cobro">Mandados</button>
+<button onclick="setFiltroRep('Moto Transporte')" id="fRepTrans" class="tab-cobro">Transporte</button>
+</div>
+</div>
+<div id="resumenRepa"></div>
+<div class="card" style="margin-top:10px">
+<div style="font-size:11px;font-weight:700;margin-bottom:8px">HOY - <span id="repFecha"></span> - Solo lectura</div>
+<div class="table-wrap"><table><thead><tr><th>Hora</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Estado</th></tr></thead><tbody id="tbodyRepa"></tbody></table></div>
+</div>
+<div class="card" style="margin-top:10px">
+<div style="font-size:11px;font-weight:700;margin-bottom:8px">DEUDAS PENDIENTES</div>
+<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Deuda</th></tr></thead><tbody id="tbodyRepaDeudas"></tbody></table></div>
+<div style="margin-top:12px"><button class="btn-green" onclick="compartirRepaWhatsApp()"><i data-lucide="message-circle" style="width:18px"></i> Enviar mi reporte WhatsApp</button></div>
+</div>
 </div>
 
 <div class="bottom">
@@ -146,6 +163,7 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <button id="b-cobros" onclick="showView('cobros')"><i data-lucide="wallet" style="width:14px"></i>COBROS</button>
 <button id="b-clientes" onclick="showView('clientes')"><i data-lucide="users" style="width:14px"></i>CLIENTES</button>
 <button id="b-estadisticas" onclick="showView('estadisticas')"><i data-lucide="bar-chart-3" style="width:14px"></i>ESTADIS</button>
+<button id="b-repartidor" onclick="showView('repartidor')"><i data-lucide="bike" style="width:14px"></i>REPARTIDOR</button>
 </div>
 
 <script>
@@ -166,7 +184,7 @@ let promos15=[
 {iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+6},
 {iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+7}
 ];
-let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,filtroHoy='todos',filtroHistTipo='todos',editIndex=-1,fechasCobro=[],esPromo=false,tabCobro='envio',tabClientes='lista',tabEst='mes';
+let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,filtroHoy='todos',filtroHistTipo='todos',filtroRepa='todos',editIndex=-1,fechasCobro=[],esPromo=false,tabCobro='envio',tabClientes='lista',tabEst='mes';
 ventas=ventas.filter(v=>!v.promo);
 ventas=[...ventas,...promos15];
 ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));
@@ -181,20 +199,21 @@ function todayISO(){
  let day=String(d.getDate()).padStart(2,'0');
  return `${y}-${m}-${day}`;
 }
-function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));document.getElementById('b-'+v).classList.add('active');if(v==='hoy')renderHoy();if(v==='historial')render();if(v==='cobros'){renderCobros();renderHistMes();}if(v==='clientes')renderClientes();if(v==='estadisticas')renderEstadisticas();}
+function showView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));document.getElementById('view-'+v).classList.add('active');document.querySelectorAll('.bottom button').forEach(b=>b.classList.remove('active'));document.getElementById('b-'+v).classList.add('active');if(v==='hoy')renderHoy();if(v==='historial')render();if(v==='cobros'){renderCobros();renderHistMes();}if(v==='clientes')renderClientes();if(v==='estadisticas')renderEstadisticas();if(v==='repartidor')renderRepartidor();}
 function showTabCobros(t){tabCobro=t;document.getElementById('tabEnvio').classList.toggle('active',t==='envio');document.getElementById('tabHist').classList.toggle('active',t==='hist');document.getElementById('panelEnvio').style.display=t==='envio'?'block':'none';document.getElementById('panelHist').style.display=t==='hist'?'block':'none';}
 function showTabClientes(t){tabClientes=t;document.getElementById('tabCliList').classList.toggle('active',t==='lista');document.getElementById('tabCliRank').classList.toggle('active',t==='ranking');document.getElementById('panelCliLista').style.display=t==='lista'?'block':'none';document.getElementById('panelCliRanking').style.display=t==='ranking'?'block':'none';renderClientes();}
 function showTabEst(t){tabEst=t;document.getElementById('tabEstMes').classList.toggle('active',t==='mes');document.getElementById('tabEstCal').classList.toggle('active',t==='cal');document.getElementById('panelEstMes').style.display=t==='mes'?'block':'none';document.getElementById('panelEstCal').style.display=t==='cal'?'block':'none';renderEstadisticas();}
 function setFiltroHoy(t){filtroHoy=t;document.getElementById('fHoyTodos').className='';document.getElementById('fHoyMandado').className='';document.getElementById('fHoyTransporte').className='';document.getElementById(t==='todos'?'fHoyTodos':t==='Moto Mandado'?'fHoyMandado':'fHoyTransporte').className='active';renderHoy();}
 function setFiltroHistTipo(t){filtroHistTipo=t;document.getElementById('fHistTodos').className='';document.getElementById('fHistMandado').className='';document.getElementById('fHistTransporte').className='';document.getElementById(t==='todos'?'fHistTodos':t==='Moto Mandado'?'fHistMandado':'fHistTransporte').className='active';render();}
+function setFiltroRep(t){filtroRepa=t;document.getElementById('fRepTodos').classList.toggle('active',t==='todos');document.getElementById('fRepMand').classList.toggle('active',t==='Moto Mandado');document.getElementById('fRepTrans').classList.toggle('active',t==='Moto Transporte');renderRepartidor();}
 function togglePromo(){esPromo=!esPromo;let b=document.getElementById('btnPromo');let inp=document.getElementById('valor');let inpP=document.getElementById('valorPromo');if(esPromo){b.classList.add('active');inp.style.display='none';inpP.style.display='block';}else{b.classList.remove('active');inp.style.display='block';inpP.style.display='none';}}
 function auto(){let i=document.getElementById('cliente').value.toLowerCase();let l=document.getElementById('list');if(!i){l.style.display='none';return;}let c=[...new Set(ventas.map(v=>v.cliente))].filter(x=>x.toLowerCase().includes(i)).slice(0,8);if(!c.length){l.style.display='none';return;}l.innerHTML=c.map(x=>`<div onclick="sel('${x.replace(/'/g,"\\'")}')">${x}</div>`).join('');l.style.display='block';}
 function sel(c){document.getElementById('cliente').value=c;document.getElementById('list').style.display='none';}
-function guardar(){let f=document.getElementById('fecha').value||todayISO();let cl=document.getElementById('cliente').value.trim();let t=document.getElementById('tipo').value;let r=document.getElementById('repa').value;let v=esPromo?0:parseInt(document.getElementById('valor').value);if(!cl||(!esPromo&&!v))return alert('Completa');let o={iso:f,cliente:cl,tipo:t,valor:v,repa:r,pagado:esPromo?true:false,promo:esPromo?true:false,ts:Date.now()};if(editIndex>=0){let p=ventas[editIndex];o.pagado=p.pagado;o.ts=p.ts;o.promo=esPromo||p.promo;ventas[editIndex]=o;editIndex=-1;document.getElementById('btnT').innerText='Confirmar';document.getElementById('btnC').style.display='none';}else ventas.unshift(o);ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';if(esPromo)togglePromo();render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();showView('hoy');}
+function guardar(){let f=document.getElementById('fecha').value||todayISO();let cl=document.getElementById('cliente').value.trim();let t=document.getElementById('tipo').value;let r=document.getElementById('repa').value;let v=esPromo?0:parseInt(document.getElementById('valor').value);if(!cl||(!esPromo&&!v))return alert('Completa');let o={iso:f,cliente:cl,tipo:t,valor:v,repa:r,pagado:esPromo?true:false,promo:esPromo?true:false,ts:Date.now()};if(editIndex>=0){let p=ventas[editIndex];o.pagado=p.pagado;o.ts=p.ts;o.promo=esPromo||p.promo;ventas[editIndex]=o;editIndex=-1;document.getElementById('btnT').innerText='Confirmar';document.getElementById('btnC').style.display='none';}else ventas.unshift(o);ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));localStorage.setItem('ventasKigo',JSON.stringify(ventas));document.getElementById('cliente').value='';document.getElementById('valor').value='';if(esPromo)togglePromo();render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();renderRepartidor();showView('hoy');}
 function cancelar(){document.getElementById('cliente').value='';document.getElementById('valor').value='';if(esPromo)togglePromo();editIndex=-1;document.getElementById('btnC').style.display='none';}
 function editar(i,from){let base=from==='hoy'?ventas.filter(v=>v.iso===todayISO()):(filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas);if(from==='hoy'&&filtroHoy!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);if(from!=='hoy'&&filtroHistTipo!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);let ri=ventas.indexOf(base[i]);let v=ventas[ri];document.getElementById('cliente').value=v.cliente;document.getElementById('valor').value=v.valor;document.getElementById('repa').value=v.repa;document.getElementById('tipo').value=v.tipo||'Moto Mandado';document.getElementById('fecha').value=v.iso;if(v.promo&&!esPromo)togglePromo();else if(!v.promo&&esPromo)togglePromo();editIndex=ri;document.getElementById('btnT').innerText='Guardar';document.getElementById('btnC').style.display='block';showView('inicio');}
-function eliminar(i,from){if(!confirm('Eliminar?'))return;let base=from==='hoy'?ventas.filter(v=>v.iso===todayISO()):(filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas);if(from==='hoy'&&filtroHoy!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);if(from!=='hoy'&&filtroHistTipo!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);let ri=ventas.indexOf(base[i]);ventas.splice(ri,1);localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();}
-function togglePagado(i,from){let base=from==='hoy'?ventas.filter(v=>v.iso===todayISO()):(filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas);if(from==='hoy'&&filtroHoy!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);if(from!=='hoy'&&filtroHistTipo!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);let ri=ventas.indexOf(base[i]);if(ventas[ri].promo)return;ventas[ri].pagado=!ventas[ri].pagado;localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();}
+function eliminar(i,from){if(!confirm('Eliminar?'))return;let base=from==='hoy'?ventas.filter(v=>v.iso===todayISO()):(filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas);if(from==='hoy'&&filtroHoy!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);if(from!=='hoy'&&filtroHistTipo!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);let ri=ventas.indexOf(base[i]);ventas.splice(ri,1);localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();renderRepartidor();}
+function togglePagado(i,from){let base=from==='hoy'?ventas.filter(v=>v.iso===todayISO()):(filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas);if(from==='hoy'&&filtroHoy!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);if(from!=='hoy'&&filtroHistTipo!=='todos')base=base.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);let ri=ventas.indexOf(base[i]);if(ventas[ri].promo)return;ventas[ri].pagado=!ventas[ri].pagado;localStorage.setItem('ventasKigo',JSON.stringify(ventas));render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();renderRepartidor();}
 function filtrarFecha(){filtroFecha=document.getElementById('filtroFecha').value||null;render();}
 function limpiarFiltro(){document.getElementById('filtroFecha').value='';filtroFecha=null;render();}
 function badge(t,p){if(p)return `<span class="badge badge-promo">PROMO</span>`;let tt=t||'Moto Mandado';let c=tt==='Moto Transporte'?'badge-transporte':'badge-mandado';return `<span class="badge ${c}">${tt==='Moto Transporte'?'TRANS':'MAND'}</span>`;}
@@ -202,13 +221,12 @@ function addFechaCobro(){let f=document.getElementById('cobroFecha').value;if(!f
 function limpiarFechasCobro(){fechasCobro=[];renderCobros();}
 function addHoyAyer(){let isoH=todayISO();let d=new Date();d.setDate(d.getDate()-1);let y=d.getFullYear();let m=String(d.getMonth()+1).padStart(2,'0');let day=String(d.getDate()).padStart(2,'0');let isoA=`${y}-${m}-${day}`;if(!fechasCobro.includes(isoH))fechasCobro.push(isoH);if(!fechasCobro.includes(isoA))fechasCobro.push(isoA);renderCobros();}
 function removeFecha(f){fechasCobro=fechasCobro.filter(x=>x!==f);renderCobros();}
- function renderCobros(){let repa=document.getElementById('cobroRepa').value;document.getElementById('chipsFechas').innerHTML=fechasCobro.length?fechasCobro.map(f=>`<span class="chip">${f} <span onclick="removeFecha('${f}')">x</span></span>`).join(''):'<span style="font-size:11px;color:#6b7280">Sin fechas</span>';let lista=fechasCobro.length?ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa)):[];let html='';if(fechasCobro.length>0){html+=`<div class="card" style="margin-bottom:10px">`;fechasCobro.forEach(f=>{let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));let total=items.reduce((a,b)=>a+b.valor,0);let mand=items.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length;let trans=items.filter(v=>v.tipo==='Moto Transporte').length;let deuda=deudaItems(items);html+=`<div style="padding:8px 0;border-bottom:1px solid #f3f4f6"><b>${f}</b> - ${mand} Mand ($${fmt(mand*5)}) / ${trans} Trans ($${fmt(trans*10)}) = ${items.length} serv<br><small>Bruto $${fmt(total)} - Deuda KIGO $${fmt(deuda)}</small></div>`;});html+=`<div style="padding-top:10px;display:flex;justify-content:space-between"><b>TOTAL DEUDA KIGO</b><b style="color:#dc2626">$${fmt(deudaItems(lista))}</b></div></div>`;}document.getElementById('resumenCobros').innerHTML=html;document.getElementById('cardDetalleCobros').style.display=lista.length?'block':'none';document.getElementById('tbodyCobros').innerHTML=lista.map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td style="font-weight:700">$${fmt(v.valor)}</td></tr>`).join('');lucide.createIcons();}
+  function renderCobros(){let repa=document.getElementById('cobroRepa').value;document.getElementById('chipsFechas').innerHTML=fechasCobro.length?fechasCobro.map(f=>`<span class="chip">${f} <span onclick="removeFecha('${f}')">x</span></span>`).join(''):'<span style="font-size:11px;color:#6b7280">Sin fechas</span>';let lista=fechasCobro.length?ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa)):[];let html='';if(fechasCobro.length>0){html+=`<div class="card" style="margin-bottom:10px">`;fechasCobro.forEach(f=>{let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));let total=items.reduce((a,b)=>a+b.valor,0);let mand=items.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length;let trans=items.filter(v=>v.tipo==='Moto Transporte').length;let deuda=deudaItems(items);html+=`<div style="padding:8px 0;border-bottom:1px solid #f3f4f6"><b>${f}</b> - ${mand} Mand ($${fmt(mand*5)}) / ${trans} Trans ($${fmt(trans*10)}) = ${items.length} serv<br><small>Bruto $${fmt(total)} - Deuda KIGO $${fmt(deuda)}</small></div>`;});html+=`<div style="padding-top:10px;display:flex;justify-content:space-between"><b>TOTAL DEUDA KIGO</b><b style="color:#dc2626">$${fmt(deudaItems(lista))}</b></div></div>`;}document.getElementById('resumenCobros').innerHTML=html;document.getElementById('cardDetalleCobros').style.display=lista.length?'block':'none';document.getElementById('tbodyCobros').innerHTML=lista.map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td style="font-weight:700">$${fmt(v.valor)}</td></tr>`).join('');lucide.createIcons();}
 function renderHistMes(){let mes=document.getElementById('mesHist').value;let repa=document.getElementById('histRepa').value;if(!mes){document.getElementById('resumenHistMes').innerHTML='<div class="card"><small style="color:#6b7280">Selecciona un mes</small></div>';document.getElementById('cardHistDetalle').style.display='none';return;}let filtradas=ventas.filter(v=>v.iso.startsWith(mes)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));let porDia={};filtradas.forEach(v=>{if(!porDia[v.iso])porDia[v.iso]=[];porDia[v.iso].push(v);});let dias=Object.keys(porDia).sort();let totalMand=0, totalTrans=0, totalDeuda=0;dias.forEach(d=>{let m=porDia[d].filter(x=>(x.tipo||'Moto Mandado')==='Moto Mandado').length; let t=porDia[d].filter(x=>x.tipo==='Moto Transporte').length; totalMand+=m; totalTrans+=t; totalDeuda+=(m*5+t*10);});document.getElementById('resumenHistMes').innerHTML=`<div class="card" style="margin-bottom:10px"><div style="display:flex;justify-content:space-between"><b>${mes}</b><b style="color:#dc2626">$${fmt(totalDeuda)} deuda</b></div><div style="margin-top:8px;font-size:11px;display:flex;gap:8px;flex-wrap:wrap"><span style="background:#fef3c7;padding:4px 8px;border-radius:6px"><b>${totalMand}</b> Mand x $5 = $${fmt(totalMand*5)}</span><span style="background:#dbeafe;padding:4px 8px;border-radius:6px"><b>${totalTrans}</b> Trans x $10 = $${fmt(totalTrans*10)}</span></div></div>`;if(!dias.length){document.getElementById('cardHistDetalle').style.display='none';return;}document.getElementById('cardHistDetalle').style.display='block';document.getElementById('tbodyHistMes').innerHTML=dias.map(d=>{let mand=porDia[d].filter(x=>(x.tipo||'Moto Mandado')==='Moto Mandado').length;let trans=porDia[d].filter(x=>x.tipo==='Moto Transporte').length;let deuda=mand*5+trans*10;return `<tr class="row-debe"><td><b>${d}</b></td><td>${mand} ($${fmt(mand*5)})</td><td>${trans} ($${fmt(trans*10)})</td><td><b>${mand+trans}</b></td><td style="font-weight:800;color:#dc2626">$${fmt(deuda)}</td></tr>`;}).join('');lucide.createIcons();}
 function compartirCobroWhatsApp(){let repa=document.getElementById('cobroRepa').value;if(!fechasCobro.length)return alert('Agrega fechas');let lista=ventas.filter(v=>fechasCobro.includes(v.iso)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));if(!lista.length)return alert('Sin deuda');let texto=`*KIGO XPRESS - COBRO PENDIENTE*\nRepartidor: *${repa}*\n\n`;fechasCobro.forEach(f=>{let items=ventas.filter(v=>v.iso===f&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));if(!items.length)return;let mand=items.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length;let trans=items.filter(v=>v.tipo==='Moto Transporte').length;let deuda=mand*5+trans*10;let bruto=items.reduce((a,b)=>a+b.valor,0);texto+=`📅 *Fecha ${f}* - ${mand} Mand ($${fmt(mand*5)}) / ${trans} Trans ($${fmt(trans*10)}) = ${items.length} serv\nBruto $${fmt(bruto)} - Deuda KIGO $${fmt(deuda)}\n\n`;});texto+=`🔴 *TOTAL DEUDA KIGO: $${fmt(deudaItems(lista))}*\n`;window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');}
 function compartirHistWhatsApp(){let mes=document.getElementById('mesHist').value;let repa=document.getElementById('histRepa').value;if(!mes)return alert('Selecciona un mes');let filtradas=ventas.filter(v=>v.iso.startsWith(mes)&&!v.pagado&&!v.promo&&(repa==='todos'||v.repa===repa));if(!filtradas.length)return alert('Sin deuda en ese mes');let porDia={};filtradas.forEach(v=>{if(!porDia[v.iso])porDia[v.iso]=[];porDia[v.iso].push(v);});let dias=Object.keys(porDia).sort();let totalMand=0,totalTrans=0,totalDeuda=0;dias.forEach(d=>{let m=porDia[d].filter(x=>(x.tipo||'Moto Mandado')==='Moto Mandado').length; let t=porDia[d].filter(x=>x.tipo==='Moto Transporte').length; totalMand+=m; totalTrans+=t; totalDeuda+=(m*5+t*10);});let texto=`*KIGO XPRESS - HISTORIAL DE DEUDAS*\nMes: *${mes}*\nRepartidor: *${repa}*\n\n`;dias.forEach(d=>{let mand=porDia[d].filter(x=>(x.tipo||'Moto Mandado')==='Moto Mandado').length;let trans=porDia[d].filter(x=>x.tipo==='Moto Transporte').length;let deuda=mand*5+trans*10;let tot=mand+trans;texto+=`📅 ${d} - Mand: ${mand} ($${mand*5}) / Trans: ${trans} ($${trans*10}) / Total: ${tot} / Deuda: $${deuda}\n`;});texto+=`\n🔴 *RESUMEN ${mes}*\nMandados: ${totalMand} ($${totalMand*5}) - Transporte: ${totalTrans} ($${totalTrans*10})\nTotal: ${totalMand+totalTrans}\n*TOTAL DEUDA: $${totalDeuda}*`;window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');}
 function getClientesData(){let map={};ventas.forEach(v=>{let n=v.cliente||'Sin nombre';if(!map[n])map[n]={nombre:n,total:0,mand:0,trans:0,promo:0,bruto:0};map[n].total++;if(v.promo)map[n].promo++;else{if((v.tipo||'Moto Mandado')==='Moto Mandado')map[n].mand++;else map[n].trans++;map[n].bruto+=v.valor||0;}});return Object.values(map);}
 function renderClientes(){let bus=(document.getElementById('buscCli')?.value||'').toLowerCase();let data=getClientesData();if(bus)data=data.filter(c=>c.nombre.toLowerCase().includes(bus));data.sort((a,b)=>a.nombre.localeCompare(b.nombre));let dataRank=[...data].sort((a,b)=>b.total-a.total);let totalClientes=data.length;let totalPedidos=data.reduce((a,b)=>a+b.total,0);document.getElementById('resumenClientes').innerHTML=`<div style="display:flex;gap:6px;flex-wrap:wrap;font-size:11px"><span style="background:#f3f4f6;padding:4px 8px;border-radius:6px"><b>${totalClientes}</b> clientes</span><span style="background:#f3f4f6;padding:4px 8px;border-radius:6px"><b>${totalPedidos}</b> pedidos</span></div>`;document.getElementById('tbodyClientes').innerHTML=data.map(c=>`<tr><td><b>${c.nombre}</b></td><td><b>${c.total}</b></td><td>${c.mand}</td><td>${c.trans}</td><td><span class="badge badge-promo">${c.promo}</span></td><td>$${fmt(c.bruto)}</td></tr>`).join('');document.getElementById('tbodyRanking').innerHTML=dataRank.map((c,i)=>{let medal=i===0?'🥇':i===1?'🥈':i===2?'🥉':`${i+1}°`;return `<tr style="${i<3?'background:#fffbeb':''}"><td><b>${medal}</b></td><td><b>${c.nombre}</b></td><td><b>${c.total}</b></td><td>${c.mand}</td><td>${c.trans}</td><td><span class="badge badge-promo">${c.promo}</span></td></tr>`;}).join('');lucide.createIcons();}
-
 function renderEstadisticas(){
  let mesInput=document.getElementById('estMes');
  if(!mesInput.value){let now=new Date();mesInput.value=`${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;}
@@ -231,14 +249,12 @@ function renderEstadisticas(){
  <tr><td><b>Moto Transporte</b></td><td><b>${trans}</b> x $10</td><td>$${fmt(trans*10)}</td></tr>
  <tr><td><b>Promociones</b></td><td><b>${promos}</b></td><td>$0</td></tr>
  <tr style="background:#f3f4f6;font-weight:800"><td>TOTAL</td><td>${total} pedidos</td><td>Bruto $${fmt(bruto)}</td></tr>`;
-
- // Calendario mes actual
  let now=new Date();
  let y=now.getFullYear(), m=now.getMonth();
  document.getElementById('tituloCal').innerText=`CALENDARIO ${now.toLocaleString('es',{month:'long'}).toUpperCase()} ${y}`;
  let diasMes=new Date(y,m+1,0).getDate();
- let primerDia=new Date(y,m,1).getDay(); // 0 dom
- primerDia=primerDia===0?6:primerDia-1; // ajustar Lun=0
+ let primerDia=new Date(y,m,1).getDay();
+ primerDia=primerDia===0?6:primerDia-1;
  let porDia={};
  ventas.forEach(v=>{
    let d=new Date(v.iso+'T00:00:00');
@@ -261,11 +277,49 @@ function renderEstadisticas(){
  }
  lucide.createIcons();
 }
-
+function renderRepartidor(){
+ let repa=document.getElementById('repView').value;
+ let iso=todayISO();
+ document.getElementById('repFecha').innerText=iso;
+ let hoy=ventas.filter(v=>v.iso===iso && v.repa===repa);
+ if(filtroRepa!=='todos')hoy=hoy.filter(v=>(v.tipo||'Moto Mandado')===filtroRepa);
+ let deudas=ventas.filter(v=>!v.pagado&&!v.promo&&v.repa===repa);
+ if(filtroRepa!=='todos')deudas=deudas.filter(v=>(v.tipo||'Moto Mandado')===filtroRepa);
+ let mandHoy=hoy.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado'&&!v.promo).length;
+ let transHoy=hoy.filter(v=>v.tipo==='Moto Transporte'&&!v.promo).length;
+ let brutoHoy=hoy.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);
+ let deudaHoy=deudaItems(hoy.filter(v=>!v.pagado&&!v.promo));
+ let deudaTotal=deudaItems(deudas);
+ document.getElementById('resumenRepa').innerHTML=`
+ <div class="card" style="margin-bottom:10px">
+ <div style="display:flex;justify-content:space-between"><b>${repa}</b><b style="color:#dc2626">$${fmt(deudaTotal)} deuda total</b></div>
+ <div class="stats" style="margin-top:10px">
+ <div class="stat"><span>Hoy</span><strong>${hoy.length}</strong></div>
+ <div class="stat"><span>Mand Hoy</span><strong>${mandHoy}</strong></div>
+ <div class="stat"><span>Trans Hoy</span><strong>${transHoy}</strong></div>
+ <div class="stat red"><span>Deuda Hoy</span><strong>$${fmt(deudaHoy)}</strong></div>
+ </div>
+ <div style="font-size:11px;margin-top:6px">Bruto hoy $${fmt(brutoHoy)} - Le toca $${fmt(brutoHoy-deudaHoy)}</div>
+ </div>`;
+ document.getElementById('tbodyRepa').innerHTML=hoy.map(v=>{
+   let est=v.promo?'PROMO':v.pagado?'<span style="color:#16a34a;font-weight:800">PAGADO</span>':'<span style="color:#dc2626;font-weight:800">DEBE</span>';
+   return `<tr class="${v.promo?'row-promo':v.pagado?'row-pagado':'row-debe'}"><td>${new Date(v.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td>$${fmt(v.valor)}</td><td>${est}</td></tr>`;
+ }).join('') || '<tr><td colspan="5" style="text-align:center;color:#6b7280">Sin pedidos hoy</td></tr>';
+ document.getElementById('tbodyRepaDeudas').innerHTML=deudas.slice(0,50).map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td style="font-weight:800;color:#dc2626">$${fmt(kigoFee(v.tipo))}</td></tr>`).join('') || '<tr><td colspan="4" style="text-align:center;color:#16a34a;font-weight:700">¡Sin deudas!</td></tr>';
+ lucide.createIcons();
+}
+function compartirRepaWhatsApp(){
+ let repa=document.getElementById('repView').value;
+ let deudas=ventas.filter(v=>!v.pagado&&!v.promo&&v.repa===repa);
+ let hoy=ventas.filter(v=>v.iso===todayISO()&&v.repa===repa);
+ let texto=`*KIGO XPRESS - REPORTE ${repa.toUpperCase()}*\nFecha: ${todayISO()}\n\nHoy: ${hoy.length} servicios\nDeuda total: $${fmt(deudaItems(deudas))}\n\n`;
+ if(deudas.length){texto+=`Detalle deudas:\n`; deudas.forEach(v=>{texto+=`${v.iso} - ${v.cliente} - ${v.tipo||'Mandado'} - $${fmt(kigoFee(v.tipo))}\n`;});}
+ window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');
+}
 function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;if(filtroHistTipo!=='todos')list=list.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);document.getElementById('tbody').innerHTML=list.map((v,i)=>{let c=v.promo?'row-promo':v.pagado?'row-pagado':'row-debe';let fee=kigoFee(v.tipo||'Moto Mandado');let k=v.promo?'PROMO':v.pagado?`$${fmt(fee)}`:`$0`;let val=v.promo?'PROMOCION':`$${fmt(v.valor)}`;let repVal=v.promo?'$0':'$'+fmt(v.valor-fee);return `<tr class="${c}"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td>${val}</td><td>${k}</td><td>${repVal}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i})">${v.promo?'🎁':v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i})">✎</button><button class="icon" onclick="eliminar(${i})">🗑</button></div></td></tr>`;}).join('');let tot=list.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);let kigoPagado=list.filter(v=>v.pagado&&!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);let kigoTotal=list.filter(v=>!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);document.getElementById('sCount').innerText=fmt(list.length);document.getElementById('sBruto').innerText='$'+fmt(tot);document.getElementById('sRep').innerText='$'+fmt(tot-kigoTotal);document.getElementById('sKigo').innerText='$'+fmt(kigoPagado);}
 function renderHoy(){let iso=todayISO();document.getElementById('hoyFecha').innerText=iso;let hoy=ventas.filter(v=>v.iso===iso);if(filtroHoy!=='todos')hoy=hoy.filter(v=>(v.tipo||'Moto Mandado')===filtroHoy);let tot=hoy.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);let kigoPagado=hoy.filter(v=>v.pagado&&!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);let kigoTotal=hoy.filter(v=>!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);document.getElementById('hCount').innerText=fmt(hoy.length);document.getElementById('hBruto').innerText='$'+fmt(tot);document.getElementById('hKigo').innerText='$'+fmt(kigoPagado);document.getElementById('hRep').innerText='$'+fmt(tot-kigoTotal);document.getElementById('tbodyHoy').innerHTML=hoy.map((v,i)=>{let c=v.promo?'row-promo':v.pagado?'row-pagado':'row-debe';let val=v.promo?'PROMOCION':`$${fmt(v.valor)}`;return `<tr class="${c}"><td>${new Date(v.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td>${val}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i},'hoy')">${v.promo?'🎁':v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i},'hoy')">✎</button><button class="icon" onclick="eliminar(${i},'hoy')">🗑</button></div></td></tr>`;}).join('');}
 document.getElementById('fecha').value=todayISO();
-render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();lucide.createIcons();
+render();renderHoy();renderCobros();renderHistMes();renderClientes();renderEstadisticas();renderRepartidor();lucide.createIcons();
 </script>
 </body>
 </html>
