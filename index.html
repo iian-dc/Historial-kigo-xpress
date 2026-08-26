@@ -137,8 +137,11 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 </div>
 <div id="view-repartidor" class="view">
 <div class="card" style="margin-bottom:10px">
-<div style="font-weight:800;font-size:14px;margin-bottom:10px">PANEL REPARTIDOR</div>
-<div class="group"><div class="label-row"><label>Selecciona repartidor</label></div><div class="wrap"><select id="repView" onchange="renderRepartidor()"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+<div style="font-weight:800;font-size:14px">PANEL REPARTIDOR</div>
+<div id="repNombreFijo" style="background:#0a0a0a;color:#fff;padding:6px 10px;border-radius:20px;font-size:11px;font-weight:800;display:none"></div>
+</div>
+<div class="group" id="groupRepSelector"><div class="label-row"><label>Selecciona repartidor (temporal)</label></div><div class="wrap"><select id="repView" onchange="renderRepartidor()"><option>Jose</option><option>Diego Gómez</option><option>Diego</option><option>Carlos</option></select></div></div>
 <div style="display:flex;gap:6px">
 <button onclick="setFiltroRep('todos')" id="fRepTodos" class="tab-cobro active">Todos</button>
 <button onclick="setFiltroRep('Moto Mandado')" id="fRepMand" class="tab-cobro">Mandados</button>
@@ -151,8 +154,8 @@ th{font-size:8px;text-transform:uppercase;color:var(--text);text-align:left;padd
 <div class="table-wrap"><table><thead><tr><th>Hora</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Estado</th><th></th></tr></thead><tbody id="tbodyRepa"></tbody></table></div>
 </div>
 <div class="card" style="margin-top:10px">
-<div style="font-size:11px;font-weight:700;margin-bottom:8px">DEUDAS PENDIENTES</div>
-<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Deuda</th><th></th></tr></thead><tbody id="tbodyRepaDeudas"></tbody></table></div>
+<div style="font-size:11px;font-weight:700;margin-bottom:8px">MIS PEDIDOS PENDIENTES</div>
+<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th></th></tr></thead><tbody id="tbodyRepaDeudas"></tbody></table></div>
 </div>
 </div>
 
@@ -185,6 +188,7 @@ let promos15=[
 {iso:'2026-07-03',cliente:'Cliente (Centro)',tipo:'Moto Mandado',valor:0,repa:'Jose',pagado:true,promo:true,ts:new Date('2026-07-03').getTime()+7}
 ];
 let ventas=JSON.parse(localStorage.getItem('ventasKigo')||'[]'),filtroFecha=null,filtroHoy='todos',filtroHistTipo='todos',filtroRepa='todos',editIndex=-1,fechasCobro=[],esPromo=false,tabCobro='envio',tabClientes='lista',tabEst='mes';
+let repartidorLogueado=null;
 ventas=ventas.filter(v=>!v.promo);
 ventas=[...ventas,...promos15];
 ventas.sort((a,b)=> a.iso===b.iso? b.ts-a.ts : b.iso.localeCompare(a.iso));
@@ -278,9 +282,19 @@ function renderEstadisticas(){
  lucide.createIcons();
 }
 function renderRepartidor(){
- let repa=document.getElementById('repView').value;
+ let repaSelect=document.getElementById('repView');
+ let repa=repartidorLogueado || repaSelect.value;
  let iso=todayISO();
  document.getElementById('repFecha').innerText=iso;
+ // si hay repartidor logueado mostrar nombre fijo y ocultar selector
+ if(repartidorLogueado){
+   document.getElementById('repNombreFijo').style.display='block';
+   document.getElementById('repNombreFijo').innerText='👤 '+repartidorLogueado.toUpperCase();
+   document.getElementById('groupRepSelector').style.display='none';
+ }else{
+   document.getElementById('repNombreFijo').style.display='none';
+   document.getElementById('groupRepSelector').style.display='block';
+ }
  let todosRepa=ventas.filter(v=>v.repa===repa &&!v.promo);
  let hoy=ventas.filter(v=>v.iso===iso && v.repa===repa);
  if(filtroRepa!=='todos')hoy=hoy.filter(v=>(v.tipo||'Moto Mandado')===filtroRepa);
@@ -289,32 +303,29 @@ function renderRepartidor(){
  let mandHoy=hoy.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado'&&!v.promo).length;
  let transHoy=hoy.filter(v=>v.tipo==='Moto Transporte'&&!v.promo).length;
  let brutoHoy=hoy.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);
- let deudaHoy=deudaItems(hoy.filter(v=>!v.pagado&&!v.promo));
- let deudaTotal=deudaItems(deudas);
- // ingresos general hasta el momento
+ // ingresos totales del repartidor
  let brutoTotal=todosRepa.reduce((a,b)=>a+b.valor,0);
- let kigoTotal=deudaItems(todosRepa);
- let ingresoTotal=brutoTotal - kigoTotal;
+ let ingresoTotal=todosRepa.reduce((a,b)=>a+(b.valor-kigoFee(b.tipo||'Moto Mandado')),0);
+ let ingresoHoy=hoy.filter(v=>!v.promo).reduce((a,b)=>a+(b.valor-kigoFee(b.tipo||'Moto Mandado')),0);
  document.getElementById('resumenRepa').innerHTML=`
  <div class="card" style="margin-bottom:10px">
- <div style="display:flex;justify-content:space-between"><b>${repa}</b><b style="color:#dc2626">$${fmt(deudaTotal)} deuda total</b></div>
- <div class="stats" style="margin-top:10px">
+ <div style="font-weight:800;font-size:14px;margin-bottom:4px">${repa.toUpperCase()} - MIS INGRESOS</div>
+ <div class="stats" style="margin-top:8px">
+ <div class="stat"><span>Total Pedidos</span><strong>${todosRepa.length}</strong></div>
+ <div class="stat dark"><span>Ingresos Totales</span><strong>$${fmt(ingresoTotal)}</strong></div>
  <div class="stat"><span>Hoy</span><strong>${hoy.length}</strong></div>
- <div class="stat"><span>Mand Hoy</span><strong>${mandHoy}</strong></div>
- <div class="stat"><span>Trans Hoy</span><strong>${transHoy}</strong></div>
- <div class="stat red"><span>Deuda Hoy</span><strong>$${fmt(deudaHoy)}</strong></div>
+ <div class="stat"><span>Ingresos Hoy</span><strong>$${fmt(ingresoHoy)}</strong></div>
  </div>
- <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px">
- <div style="background:#f3f4f6;padding:8px;border-radius:8px;font-size:11px"><span style="font-size:8px;font-weight:700;color:#6b7280;display:block">INGRESOS TOTAL HASTA HOY</span><b style="font-size:14px;color:#16a34a">$${fmt(ingresoTotal)}</b><br><small>${todosRepa.length} pedidos totales</small></div>
- <div style="background:#f3f4f6;padding:8px;border-radius:8px;font-size:11px"><span style="font-size:8px;font-weight:700;color:#6b7280;display:block">BRUTO TOTAL</span><b style="font-size:14px">$${fmt(brutoTotal)}</b><br><small>KIGO total $${fmt(kigoTotal)}</small></div>
+ <div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;font-size:11px">
+ <span style="background:#fef3c7;padding:4px 8px;border-radius:6px"><b>${todosRepa.filter(v=>(v.tipo||'Moto Mandado')==='Moto Mandado').length}</b> Mandados totales</span>
+ <span style="background:#dbeafe;padding:4px 8px;border-radius:6px"><b>${todosRepa.filter(v=>v.tipo==='Moto Transporte').length}</b> Transporte totales</span>
  </div>
- <div style="font-size:11px;margin-top:6px">Hoy Bruto $${fmt(brutoHoy)} - Hoy le toca $${fmt(brutoHoy-deudaHoy)}</div>
  </div>`;
  document.getElementById('tbodyRepa').innerHTML=hoy.map((v,idx)=>{
    let est=v.promo?'PROMO':v.pagado?'<span style="color:#16a34a;font-weight:800">PAGADO</span>':'<span style="color:#dc2626;font-weight:800">DEBE</span>';
    return `<tr class="${v.promo?'row-promo':v.pagado?'row-pagado':'row-debe'}"><td>${new Date(v.ts).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'})}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td>$${fmt(v.valor)}</td><td>${est}</td><td><button class="icon-report" onclick="reportarPedido(${ventas.indexOf(v)})" title="Reportar">!</button></td></tr>`;
  }).join('') || '<tr><td colspan="6" style="text-align:center;color:#6b7280">Sin pedidos hoy</td></tr>';
- document.getElementById('tbodyRepaDeudas').innerHTML=deudas.slice(0,100).map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td style="font-weight:800;color:#dc2626">$${fmt(kigoFee(v.tipo))}</td><td><button class="icon-report" onclick="reportarPedido(${ventas.indexOf(v)})" title="Reportar">!</button></td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:#16a34a;font-weight:700">¡Sin deudas!</td></tr>';
+ document.getElementById('tbodyRepaDeudas').innerHTML=deudas.slice(0,100).map(v=>`<tr class="row-debe"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b></td><td>${badge(v.tipo,v.promo)}</td><td style="font-weight:800">$${fmt(v.valor)}</td><td><button class="icon-report" onclick="reportarPedido(${ventas.indexOf(v)})" title="Reportar">!</button></td></tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:#16a34a;font-weight:700">¡Sin pendientes!</td></tr>';
  lucide.createIcons();
 }
 function reportarPedido(idx){
@@ -322,7 +333,7 @@ function reportarPedido(idx){
  if(!v)return;
  let motivo=prompt(`Reportar pedido de ${v.cliente} - ${v.iso}\nEscribe qué no te parece:`);
  if(!motivo)return;
- let texto=`*REPORTE REPARTIDOR - KIGO XPRESS*\n\nRepartidor: *${v.repa}*\nFecha: ${v.iso}\nCliente: ${v.cliente}\nTipo: ${v.tipo||'Moto Mandado'}\nValor: $${fmt(v.valor)}\nDeuda KIGO: $${fmt(kigoFee(v.tipo))}\n\n*Motivo del reporte:*\n${motivo}\n`;
+ let texto=`*REPORTE REPARTIDOR - KIGO XPRESS*\n\nRepartidor: *${v.repa}*\nFecha: ${v.iso}\nCliente: ${v.cliente}\nTipo: ${v.tipo||'Moto Mandado'}\nValor: $${fmt(v.valor)}\n\n*Motivo del reporte:*\n${motivo}\n`;
  window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`,'_blank');
 }
 function render(){let list=filtroFecha?ventas.filter(v=>v.iso===filtroFecha):ventas;if(filtroHistTipo!=='todos')list=list.filter(v=>(v.tipo||'Moto Mandado')===filtroHistTipo);document.getElementById('tbody').innerHTML=list.map((v,i)=>{let c=v.promo?'row-promo':v.pagado?'row-pagado':'row-debe';let fee=kigoFee(v.tipo||'Moto Mandado');let k=v.promo?'PROMO':v.pagado?`$${fmt(fee)}`:`$0`;let val=v.promo?'PROMOCION':`$${fmt(v.valor)}`;let repVal=v.promo?'$0':'$'+fmt(v.valor-fee);return `<tr class="${c}"><td>${v.iso.slice(5)}</td><td><b>${v.cliente}</b><br><small>${v.repa}</small></td><td>${badge(v.tipo,v.promo)}</td><td>${val}</td><td>${k}</td><td>${repVal}</td><td><div class="actions"><button class="icon ${v.pagado?'pagado':'debe'}" onclick="togglePagado(${i})">${v.promo?'🎁':v.pagado?'✓':'x'}</button><button class="icon" onclick="editar(${i})">✎</button><button class="icon" onclick="eliminar(${i})">🗑</button></div></td></tr>`;}).join('');let tot=list.filter(v=>!v.promo).reduce((a,b)=>a+b.valor,0);let kigoPagado=list.filter(v=>v.pagado&&!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);let kigoTotal=list.filter(v=>!v.promo).reduce((a,b)=>a+kigoFee(b.tipo||'Moto Mandado'),0);document.getElementById('sCount').innerText=fmt(list.length);document.getElementById('sBruto').innerText='$'+fmt(tot);document.getElementById('sRep').innerText='$'+fmt(tot-kigoTotal);document.getElementById('sKigo').innerText='$'+fmt(kigoPagado);}
